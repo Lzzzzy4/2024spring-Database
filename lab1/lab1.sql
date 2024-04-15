@@ -1,3 +1,4 @@
+-- Active: 1712909736541@@127.0.0.1@3306@db
 
 create table Book(
     ID char(8) primary key,
@@ -36,32 +37,36 @@ select b.ID, b.name from Book b, Borrow br, Reader r where r.name = '李林' and
 -- (6)
 select r.name from Reader r, Borrow br where r.ID = br.Reader_ID group by br.Reader_ID having count(*) > 3;
 -- (7)
-select r.name, r.ID from Reader r where r.ID not in (select Reader_ID from Borrow where book_ID in (select book_ID from Borrow where Reader_ID = 'r15'));
+select r.name, r.ID from Reader r where r.ID not in (select Reader_ID from Borrow where book_ID in (select book_ID from Borrow b,Reader r where r.name = '李林' and b.Reader_ID = r.ID));
 -- (8)
 select ID, name from Book where name like '%MySQL%';
 -- (9)
 select Reader_ID, name, age, count(*) as borrow_num from Borrow b, Reader r where b.Reader_ID = r.ID and Borrow_Date between '2021-01-01' and '2021-12-31' group by Reader_ID order by borrow_num desc limit 20;
 -- (10)
-create view BorrowInfo as select r.ID, r.name, br.book_ID, b.name, Borrow_Date from Reader r, Borrow br, Book b where r.ID = br.Reader_ID and b.ID = br.book_ID;
+create view BorrowInfo as select r.ID, r.name as reader_name, br.book_ID, b.name as book_name, Borrow_Date from Reader r, Borrow br, Book b where r.ID = br.Reader_ID and b.ID = br.book_ID;
 select ID, count(distinct book_ID) as borrow_num from BorrowInfo where Borrow_Date between '2022-01-01' and '2022-12-31' group by ID;
 
 
 create procedure updateBookID(IN oldID char(8), IN newID char(8))
 begin
     if oldID like '00%' then
-        if newID like '00%' then
-            signal sqlstate '45000' set message_text = 'Can not update super ID to super ID';
-        else
-            update Book set ID = newID where ID = oldID;
-        end if;
+        signal sqlstate '45000' set message_text = 'Can not update super ID to super ID';
     else
         if newID like '00%' then
             signal sqlstate '45000' set message_text = 'Can not update normal ID to super ID';
         else
+            SET FOREIGN_KEY_CHECKS = 0;
             update Book set ID = newID where ID = oldID;
+            SET FOREIGN_KEY_CHECKS = 1;
         end if;
     end if;
 end;
+
+CALL updateBookID('00b00001', '00b00002');
+CALL updateBookID('b1', '00b00001');
+CALL updateBookID('00b00001', 'b3');
+CALL updateBookID('b1', 'b10000');
+
 
 create trigger updateStatusAndTimes after insert on Borrow
 for each row
@@ -73,3 +78,9 @@ for each row
 begin
     update Book set status = 0 where ID = new.book_ID and new.Return_Date is not null;
 end;
+
+insert into Borrow value('00b00001', 'r2', '2024-04-8', NULL);
+update Borrow set Return_Date = '2024-04-8' where book_ID = '00b00001' and Reader_ID = 'r2';
+
+insert into Borrow value('00b00002', 'r2', '2024-04-9', NULL);
+
