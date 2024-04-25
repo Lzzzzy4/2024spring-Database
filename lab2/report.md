@@ -72,217 +72,136 @@
 
 ### 3.2 数据库表定义
 
-```sql
-/*==============================================================*/
-/* Table: account                                               */
-/*==============================================================*/
-create table account
-(
-   account_id           varchar(20) not null  comment '',
-   money                float(20,0) not null  comment '',
-   open_date            date not null  comment '',
-   open_branch          varchar(20) not null  comment '',
-   latest_date          date not null  comment '',
-   primary key (account_id)
-);
+账户 account
 
-/*==============================================================*/
-/* Table: branch_bank                                           */
-/*==============================================================*/
-create table branch_bank
-(
-   name                 varchar(20) not null  comment '',
-   city                 varchar(20) not null  comment '',
-   assets               float(20,0) not null  comment '',
-   primary key (name)
-);
+| 列名        | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键 |
+| ----------- | ------------ | ------------ | -------- | -------- | -------- |
+| account_id  | 账户号       | varchar(20)  | 否       | 是       | 否       |
+| money       | 余额         | float(20)    | 否       | 否       | 否       |
+| open_date   | 开户日期     | date         | 否       | 否       | 否       |
+| open_branch | 开户支行     | varchar(20)  | 否       | 否       | 否       |
+| latest_date | 最近访问时间 | date         | 否       | 否       | 否       |
 
-/*==============================================================*/
-/* Table: relation                                              */
-/*==============================================================*/
-create table relation
-(
-   relation_name        varchar(20) not null  comment '',
-   relation_telephone   numeric(20,0) not null  comment '',
-   email                varchar(20) not null  comment '',
-   relationship         varchar(20) not null  comment '',
-   primary key (relation_name)
-);
+支行 branch_bank
 
-/*==============================================================*/
-/* Table: loan                                                  */
-/*==============================================================*/
-create table loan
-(
-   loan_id              varchar(20) not null  comment '',
-   name                 varchar(20) not null  comment '',
-   custom_id            varchar(20) not null  comment '',
-   amount               float(20,0) not null  comment '',
-   branch               varchar(20) not null  comment '',
-   primary key (loan_id),
-   constraint FK_LOAN_SETUP_CUS_CUSTOM foreign key (custom_id)
-      references custom (custom_id) on delete restrict on update restrict,
-   constraint FK_LOAN_BRANCH_LO_BRANCH_B foreign key (name)
-      references branch_bank (name) on delete restrict on update restrict
-);
+| 列名   | 中文含义 | 类型（长度） | 允许为空 | 是否主键 | 是否外键 |
+| ------ | -------- | ------------ | -------- | -------- | -------- |
+| name   | 支行名   | varchat(20)  | 否       | 是       | 否       |
+| city   | 城市     | varchar(20)  | 否       | 否       | 否       |
+| assets | 资产     | float(20)    | 否       | 否       | 否       |
 
-/*==============================================================*/
-/* Table: custom                                                */
-/*==============================================================*/
-create table custom
-(
-   custom_id            varchar(20) not null  comment '',
-   relation_name        varchar(20) not null  comment '',
-   loan_id              varchar(20)  comment '',
-   custom_name          varchar(20) not null  comment '',
-   cunstom_telephone    numeric(20,0) not null  comment '',
-   custom_address       varchar(20) not null  comment '',
-   primary key (custom_id),
-   constraint FK_CUSTOM_RELATION__RELATION foreign key (relation_name)
-      references relation (relation_name) on delete restrict on update restrict,
-   constraint FK_CUSTOM_SETUP_CUS_LOAN foreign key (loan_id)
-      references loan (loan_id) on delete restrict on update restrict
-);
+联系人 relation
 
-/*==============================================================*/
-/* Table: loan_account                                          */
-/*==============================================================*/
-create table loan_account
-(
-   account_id           varchar(20) not null  comment '',
-   money                float(20,0) not null  comment '',
-   open_date            date not null  comment '',
-   open_branch          varchar(20) not null  comment '',
-   latest_date          date not null  comment '',
-   borrow               float(20,0)  comment '',
-   primary key (account_id),
-   constraint FK_LOAN_ACC_LOAN_ACCO_ACCOUNT foreign key (account_id)
-      references account (account_id) on delete restrict on update restrict
-);
+| 列名               | 中文含义   | 类型（长度） | 允许为空 | 是否主键 | 是否外键 |
+| ------------------ | ---------- | ------------ | -------- | -------- | -------- |
+| relation_name      | 姓名       | varchar(20)  | 否       | 是       | 否       |
+| relation_telephone | 电话       | numeric(20)  | 否       | 否       | 否       |
+| email              | 邮箱       | varchar(20)  | 否       | 否       | 否       |
+| relationship       | 与客户关系 | varchar(20)  | 否       | 否       | 否       |
 
-/*==============================================================*/
-/* Table: custom_branch_loan                                    */
-/*==============================================================*/
-create table custom_branch_loan
-(
-   name                 varchar(20) not null  comment '',
-   custom_id            varchar(20) not null  comment '',
-   account_id           varchar(20)  comment '',
-   constraint FK_CUSTOM_B_OWN_3_CUSTOM foreign key (custom_id)
-      references custom (custom_id) on delete restrict on update restrict,
-   constraint FK_CUSTOM_B_OWN_4_BRANCH_B foreign key (name)
-      references branch_bank (name) on delete restrict on update restrict,
-   constraint FK_CUSTOM_B_OWN_LOAN__LOAN_ACC foreign key (account_id)
-      references loan_account (account_id) on delete restrict on update restrict
-);
+贷款 loan
 
-/*==============================================================*/
-/* Table: saving_account                                        */
-/*==============================================================*/
-create table saving_account
-(
-   account_id           varchar(20) not null  comment '',
-   money                float(20,0) not null  comment '',
-   open_date            date not null  comment '',
-   open_branch          varchar(20) not null  comment '',
-   latest_date          date not null  comment '',
-   interest_rate        float(20)  comment '',
-   currency             varchar(20)  comment '',
-   primary key (account_id),
-   constraint FK_SAVING_A_SAVING_AC_ACCOUNT foreign key (account_id)
-      references account (account_id) on delete restrict on update restrict
-);
+| 列名      | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键           |
+| --------- | ------------ | ------------ | -------- | -------- | ------------------ |
+| loan_id   | 贷款号       | varchar(20)  | 否       | 是       | 否                 |
+| name      | 办理支行     | varchar(20)  | 否       | 否       | branch_bank (name) |
+| custom_id | 申请人身份证 | varchar(20)  | 否       | 否       | custom (custom_id) |
+| amount    | 总额         | float(20)    | 否       | 否       | 否                 |
 
-/*==============================================================*/
-/* Table: custom_branch_saving                                  */
-/*==============================================================*/
-create table custom_branch_saving
-(
-   custom_id            varchar(20) not null  comment '',
-   name                 varchar(20) not null  comment '',
-   account_id           varchar(20)  comment '',
-   constraint FK_CUSTOM_B_OWN_1_CUSTOM foreign key (custom_id)
-      references custom (custom_id) on delete restrict on update restrict,
-   constraint FK_CUSTOM_B_OWN_2_BRANCH_B foreign key (name)
-      references branch_bank (name) on delete restrict on update restrict,
-   constraint FK_CUSTOM_B_OWN_SAVIN_SAVING_A foreign key (account_id)
-      references saving_account (account_id) on delete restrict on update restrict
-);
+客户 custom
 
-/*==============================================================*/
-/* Table: custom_own_loan                                       */
-/*==============================================================*/
-create table custom_own_loan
-(
-   custom_id            varchar(20) not null  comment '',
-   loan_id              varchar(20) not null  comment '',
-   primary key (custom_id, loan_id),
-   constraint FK_CUSTOM_O_CUSTOM_OW_CUSTOM foreign key (custom_id)
-      references custom (custom_id) on delete restrict on update restrict,
-   constraint FK_CUSTOM_O_CUSTOM_OW_LOAN foreign key (loan_id)
-      references loan (loan_id) on delete restrict on update restrict
-);
+| 列名             | 中文含义   | 类型（长度） | 允许为空 | 是否主键 | 是否外键                 |
+| ---------------- | ---------- | ------------ | -------- | -------- | ------------------------ |
+| custom_id        | 身份证号   | varchar(20)  | 否       | 是       | 否                       |
+| relation_name    | 联系人姓名 | varchar(20)  | 否       | 否       | relation (relation_name) |
+| loan_id          | 借款号     | varchar(20)  | 是       | 否       | loan (loan_id)           |
+| custom_name      | 姓名       | varchar(20)  | 否       | 否       | 否                       |
+| custom_telephone | 电话       | numeric(20)  | 否       | 否       | 否                       |
+| custom_address   | 住址       | varchar(20)  | 否       | 否       | 否                       |
 
-/*==============================================================*/
-/* Table: department                                            */
-/*==============================================================*/
-create table department
-(
-   apartment            varchar(20) not null  comment '',
-   name                 varchar(20) not null  comment '',
-   type_apartment       varchar(20) not null  comment '',
-   manager_id           varchar(20) not null  comment '',
-   primary key (apartment),
-   constraint FK_DEPARTME_BRANCH_DE_BRANCH_B foreign key (name)
-      references branch_bank (name) on delete restrict on update restrict
-);
+信用卡账户 loan_account
 
-/*==============================================================*/
-/* Table: staff                                                 */
-/*==============================================================*/
-create table staff
-(
-   staff_id             varchar(20) not null  comment '',
-   apartment            varchar(20) not null  comment '',
-   staff_name           varchar(20) not null  comment '',
-   telephone            numeric(20,0) not null  comment '',
-   staff_address        varchar(20) not null  comment '',
-   start_date           date not null  comment '',
-   is_manager           bool not null  comment '',
-   primary key (staff_id),
-   constraint FK_STAFF_STAFF_DEP_DEPARTME foreign key (apartment)
-      references department (apartment) on delete restrict on update restrict
-);
+| 列名        | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键             |
+| ----------- | ------------ | ------------ | -------- | -------- | -------------------- |
+| account_id  | 账号         | varchar(20)  | 否       | 是       | account (account_id) |
+| money       | 余额         | float(20,0)  | 否       | 否       | 否                   |
+| open_date   | 开户日期     | date         | 否       | 否       | 否                   |
+| open_branch | 开户支行     | varchar(20)  | 否       | 否       | 否                   |
+| latest_date | 最近访问时间 | date         | 否       | 否       | 否                   |
+| borrow      | 透支额度     | float(20,0)  | 否       | 否       | 否                   |
 
-/*==============================================================*/
-/* Table: custom_staff                                          */
-/*==============================================================*/
-create table custom_staff
-(
-   custom_id            varchar(20) not null  comment '',
-   staff_id             varchar(20) not null  comment '',
-   primary key (custom_id, staff_id),
-   constraint FK_CUSTOM_S_CUSTOM_ST_CUSTOM foreign key (custom_id)
-      references custom (custom_id) on delete restrict on update restrict,
-   constraint FK_CUSTOM_S_CUSTOM_ST_STAFF foreign key (staff_id)
-      references staff (staff_id) on delete restrict on update restrict
-);
+客户-支行-借款 custom_branch_loan
 
-/*==============================================================*/
-/* Table: pay                                                   */
-/*==============================================================*/
-create table pay
-(
-   pay_date             date not null  comment '',
-   pay_amout            float(20,0) not null  comment '',
-   pay_account          varchar(20) not null  comment '',
-   pay_id               varchar(20) not null  comment '',
-   loan_id              varchar(20)  comment '',
-   primary key (pay_id),
-   constraint "FK_PAY_LOAN-PAY_LOAN" foreign key (loan_id)
-      references loan (loan_id) on delete restrict on update restrict
-);
-```
+| 列名       | 中文含义 | 类型（长度） | 允许为空 | 是否主键 | 是否外键                    |
+| ---------- | -------- | ------------ | -------- | -------- | --------------------------- |
+| custom_id  | 客户id   | varchar(20)  | 否       | 否       | custom (custom_id)          |
+| name       | 支行名   | varchar(20)  | 否       | 否       | branch_bank (name)          |
+| account_id | 账号     | varchar(20)  | 是       | 否       | saving_account (account_id) |
+
+储蓄账号 saving_account
+
+| 列名          | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键             |
+| ------------- | ------------ | ------------ | -------- | -------- | -------------------- |
+| account_id    | 账号         | varchar(20)  | 否       | 是       | account (account_id) |
+| money         | 余额         | float(20)    | 否       | 否       | 否                   |
+| open_date     | 开户日期     | date         | 否       | 否       | 否                   |
+| open_branch   | 开户支行     | varchar(20)  | 否       | 否       | 否                   |
+| latest_date   | 最近访问时间 | date         | 否       | 否       | 否                   |
+| interest_rate | 利率         | float(20)    | 否       | 否       | 否                   |
+| currency      | 货币类型     | varchar(20)  | 否       | 否       | 否                   |
+
+客户-支行-储蓄 custom_branch_saving
+
+| 列名       | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键                    |
+| ---------- | ------------ | ------------ | -------- | -------- | --------------------------- |
+| custom_id  | 客户身份证号 | varchar(20)  | 否       | 否       | custom (custom_id)          |
+| name       | 支行名       | varchar(20)  | 否       | 否       | branch_bank (name)          |
+| account_id | 账号         | varchar(20)  | 是       | 否       | saving_account (account_id) |
+
+客户贷款表 custom_own_loan
+
+| 列名      | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键           |
+| --------- | ------------ | ------------ | -------- | -------- | ------------------ |
+| custom_id | 客户身份证号 | varchar(20)  | 否       | 是       | custom (custom_id) |
+| loan_id   | 借款号       | varchar(20)  | 否       | 是       | loan (loan_id)     |
+
+支行部门 department
+根据crebas.sql补全
+| 列名       | 中文含义 | 类型（长度） | 允许为空 | 是否主键 | 是否外键 |
+| ---------- | -------- | ------------ | -------- | -------- | -------- |
+| department | 部门名 | varchar(20) | 否 | 是 | 否 |
+| name | 支行名 | varchar(20) | 否 | 否 | 否 |
+| type_apartment | 部门类型 | varchar(20) | 否 | 否 | 否 |
+| manager_id | 经理工号 | varchar(20) | 否 | 否 | staff (staff_id) |
+
+员工 staff
+
+| 列名          | 中文含义 | 类型（长度） | 允许为空 | 是否主键 | 是否外键               |
+| ------------- | -------- | ------------ | -------- | -------- | ---------------------- |
+| staff_id      | 工号     | varchar(20)  | 否       | 是       | 否                     |
+| staff_name    | 姓名     | varchar(20)  | 否       | 否       | 否                     |
+| telephone     | 电话     | numeric(20)  | 否       | 否       | 否                     |
+| staff_address | 地址     | varchar(20)  | 否       | 否       | 否                     |
+| start_date    | 入职日期 | date         | 否       | 否       | 否                     |
+| is_manager    | 是否经理 | boolean      | 否       | 否       | 否                     |
+| department    | 所属部门 | varchar(20)  | 否       | 否       | department (apartment) |
+
+员工负责顾客表 custom_staff
+
+| 列名      | 中文含义     | 类型（长度） | 允许为空 | 是否主键 | 是否外键           |
+| --------- | ------------ | ------------ | -------- | -------- | ------------------ |
+| staff_id  | 员工工号     | varchar(20)  | 否       | 是       | staff (staff_id)   |
+| custom_id | 客户身份证号 | varchar(20)  | 否       | 是       | custom (custom_id) |
+
+贷款支付 pay
+
+| 列名      | 中文含义 | 类型（长度） | 允许为空 | 是否主键 | 是否外键           |
+| --------- | -------- | ------------ | -------- | -------- | ------------------ |
+| pay_id    | 支付号   | varchar(20)  | 否       | 是       | 否                 |
+| pay_date | 支付日期 | date         | 否       | 否       | 否                 |
+| pay_amout | 金额     | float(20)    | 否       | 否       | 否                 |
+| pay_account | 入款账户 | varchar(20)  | 否       | 否       | account (account_id) |
+| loan_id   | 贷款号   | varchar(20)  | 否       | 否       | loan (loan_id)     |
 
 ## 4 总结与体会
 
