@@ -65,7 +65,7 @@ end;
 CALL updateBookID('00b00001', '00b00002');
 CALL updateBookID('b1', '00b00001');
 CALL updateBookID('00b00001', 'b3');
-CALL updateBookID('b1', 'b10000');
+CALL updateBookID('b10000', '00b10000');
 
 
 create trigger updateStatusAndTimes after insert on Borrow
@@ -79,8 +79,8 @@ begin
     update Book set status = 0 where ID = new.book_ID and new.Return_Date is not null;
 end;
 
-insert into Borrow value('00b00001', 'r2', '2024-04-8', NULL);
-update Borrow set Return_Date = '2024-04-8' where book_ID = '00b00001' and Reader_ID = 'r2';
+insert into Borrow value('00b00001', 'r1', '2024-04-8', NULL);
+update Borrow set Return_Date = '2024-04-8' where book_ID = '00b00001' and Reader_ID = 'r1';
 
-insert into Borrow value('00b00002', 'r2', '2024-04-9', NULL);
+insert into Borrow value('00b00002', 'r1', '2024-04-9', NULL);
 
