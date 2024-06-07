@@ -1,10 +1,16 @@
 -- Active: 1712909736541@@127.0.0.1@3306@teacher
 /* user */
-CREATE TABLE user (
+/* CREATE TABLE user (
     name VARCHAR(256) PRIMARY KEY,
     password VARCHAR(256) NOT NULL
-);
-
+); */
+drop table PublishingPapers;
+drop table LeadingCourses;
+drop table TakingProjects;
+drop table Projects;
+drop table Papers;
+drop table Courses;
+drop table Teachers;
 CREATE TABLE Teachers (
     工号 CHAR(5) PRIMARY KEY,
     姓名 VARCHAR(256) NOT NULL,
@@ -19,9 +25,7 @@ CREATE TABLE Papers (
     发表期刊 VARCHAR(256) NOT NULL,
     发表年份 DATE NOT NULL,
     类型 INT CHECK (类型 IN (1, 2, 3, 4)),
-    级别 INT CHECK (级别 IN (1, 2, 3, 4, 5, 6)),
-    工号 CHAR(5),
-    FOREIGN KEY (工号) REFERENCES Teachers(工号)
+    级别 INT CHECK (级别 IN (1, 2, 3, 4, 5, 6))
 );
 
 -- Table for Projects
@@ -31,9 +35,7 @@ CREATE TABLE Projects (
     项目来源 VARCHAR(256) NOT NULL,
     类型 INT CHECK (类型 IN (1, 2, 3, 4, 5)),
     起始年份 DATE NOT NULL,
-    结束年份 DATE,
-    工号 CHAR(5),
-    FOREIGN KEY (工号) REFERENCES Teachers(工号)
+    结束年份 DATE
 );
 
 -- Table for Courses
@@ -41,12 +43,11 @@ CREATE TABLE Courses (
     课程号 VARCHAR(256) PRIMARY KEY,
     课程名称 VARCHAR(256) NOT NULL,
     学时数 INT NOT NULL,
-    课程性质 INT CHECK (课程性质 IN (1, 2)),
-    工号 CHAR(5),
-    FOREIGN KEY (工号) REFERENCES Teachers(工号)
+    课程性质 INT CHECK (课程性质 IN (1, 2))
 );
 
 -- Table for Publishing Papers
+
 CREATE TABLE PublishingPapers (
     工号 CHAR(5),
     序号 INT,
@@ -85,17 +86,17 @@ INSERT INTO Teachers VALUES ('00001', '张三', 1, 1);
 INSERT INTO Teachers VALUES ('00002', '李四', 1, 2);
 INSERT INTO Teachers VALUES ('00003', '王五', 1, 3);
 
-INSERT INTO Papers VALUES (1, '论文1', '期刊1', '2020-01-01', 1, 1, '00001');
-INSERT INTO Papers VALUES (2, '论文2', '期刊2', '2020-01-01', 2, 2, '00002');
-INSERT INTO Papers VALUES (3, '论文3', '期刊3', '2020-01-01', 3, 3, '00003');
+INSERT INTO Papers VALUES (1, '论文1', '期刊1', '2020-01-01', 1, 1);
+INSERT INTO Papers VALUES (2, '论文2', '期刊2', '2020-01-01', 2, 2);
+INSERT INTO Papers VALUES (3, '论文3', '期刊3', '2020-01-01', 3, 3);
 
-INSERT INTO Projects VALUES ('00001', '项目1', '来源1', 1, '2020-01-01', '2020-01-01', '00001');
-INSERT INTO Projects VALUES ('00002', '项目2', '来源2', 2, '2020-01-01', '2020-01-01', '00002');
-INSERT INTO Projects VALUES ('00003', '项目3', '来源3', 3, '2020-01-01', '2020-01-01', '00003');
+INSERT INTO Projects VALUES ('00001', '项目1', '来源1', 1, '2020-01-01', '2020-01-01');
+INSERT INTO Projects VALUES ('00002', '项目2', '来源2', 2, '2020-01-01', '2020-01-01');
+INSERT INTO Projects VALUES ('00003', '项目3', '来源3', 3, '2020-01-01', '2020-01-01');
 
-INSERT INTO Courses VALUES ('课程1', '课程1', 1, 1, '00001');
-INSERT INTO Courses VALUES ('课程2', '课程2', 2, 2, '00002');
-INSERT INTO Courses VALUES ('课程3', '课程3', 3, 1, '00003');
+INSERT INTO Courses VALUES ('课程1', '课程1', 1, 1);
+INSERT INTO Courses VALUES ('课程2', '课程2', 2, 2);
+INSERT INTO Courses VALUES ('课程3', '课程3', 3, 1);
 
 INSERT INTO PublishingPapers VALUES ('00001', 1, 1, TRUE);
 INSERT INTO PublishingPapers VALUES ('00002', 2, 2, FALSE);

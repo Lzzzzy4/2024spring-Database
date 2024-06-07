@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-
+<!-- CREATE TABLE Projects (
+    项目号 CHAR(5) PRIMARY KEY,
+    项目名称 VARCHAR(256) NOT NULL,
+    项目来源 VARCHAR(256) NOT NULL,
+    类型 INT CHECK (类型 IN (1, 2, 3, 4, 5)),
+    起始年份 DATE NOT NULL,
+    结束年份 DATE
+); -->
 <html lang="en">
 <head>
 <base href="./">
@@ -54,14 +61,18 @@
     <div class="small text-muted">缺省值不变</div>
     <input type="hidden" name="key" value="">
     <input type="hidden" name="type" value="update">
-    <label for="email"><b>工号</b></label>
-    <input type="text" placeholder="工号" name="工号">
-    <label for="email"><b>姓名</b></label>
-    <input type="text" placeholder="姓名" name="姓名">
-    <label for="email"><b>性别</b></label>
-    <input type="text" placeholder="性别" name="性别">
-    <label for="email"><b>职称</b></label>
-    <input type="text" placeholder="职称" name="职称">
+    <label for="email"><b>项目号</b></label>
+    <input type="text" placeholder="项目号" name="项目号">
+    <label for="email"><b>项目名称</b></label>
+    <input type="text" placeholder="项目名称" name="项目名称">
+    <label for="email"><b>项目来源</b></label>
+    <input type="text" placeholder="项目来源" name="项目来源">
+    <label for="email"><b>类型</b></label>
+    <input type="text" placeholder="类型" name="类型">
+    <label for="email"><b>起始年份</b></label>
+    <input type="text" placeholder="起始年份" name="起始年份">
+    <label for="email"><b>结束年份</b></label>
+    <input type="text" placeholder="结束年份" name="结束年份">
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm()">取消</button>
   </form>
@@ -101,10 +112,12 @@
                 <h4 class="card-title mb-0">查询</h4>
                 <form class="form-insert" method="POST">
                   <input type="hidden" name="type" value="query">
-                  <input type="text" placeholder="工号" name="工号">
-                  <input type="text" placeholder="姓名" name="姓名">
-                  <input type="text" placeholder="性别" name="性别">
-                  <input type="text" placeholder="职称" name="职称">
+                  <input type="text" placeholder="项目号" name="项目号">
+                  <input type="text" placeholder="项目名称" name="项目名称">
+                  <input type="text" placeholder="项目来源" name="项目来源">
+                  <input type="text" placeholder="类型" name="类型">
+                  <input type="text" placeholder="起始年份" name="起始年份">
+                  <input type="text" placeholder="结束年份" name="结束年份">
                   <button class="btn btn-info" type="submit">查询</button>
                 </form>
           </div>
@@ -113,7 +126,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col-sm-5">
-                <h4 class="card-title mb-0">教师</h4>
+                <h4 class="card-title mb-0">项目</h4>
                 <!-- <div class="small text-muted">2021 6</div> -->
               </div>
             </div>
@@ -126,11 +139,13 @@
                     <th>操作</th>
                   </tr>
                   {% for i in content %}
-                  <tr id="{{ i.工号 }}">
-                    <td> {{ i.工号 }} </td>
-                    <td> {{ i.姓名 }} </td>
-                    <td> {{ i.性别 }} </td>
-                    <td> {{ i.职称 }} </td>
+                  <tr id="{{ i.项目号 }}">
+                    <td> {{ i.项目号 }} </td>
+                    <td> {{ i.项目名称 }} </td>
+                    <td> {{ i.项目来源 }} </td>
+                    <td> {{ i.类型 }} </td>
+                    <td> {{ i.起始年份 }} </td>
+                    <td> {{ i.结束年份 }} </td>
                     <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
                       <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
@@ -146,10 +161,12 @@
             <!-- <div class="small text-muted">请勿缺省</div> -->
             <form class="form-insert" method="POST">
               <input type="hidden" name="type" value="insert">
-              <input type="text" placeholder="工号(Not Null)" name="工号" required="">
-              <input type="text" placeholder="姓名(Not Null)" name="姓名" required="">
-              <input type="text" placeholder="性别(Not Null)" name="性别" required="">
-              <input type="text" placeholder="职称(Not Null)" name="职称" required="">
+              <input type="text" placeholder="项目号(Not Null)" name="项目号" required="">
+              <input type="text" placeholder="项目名称(Not Null)" name="项目名称" required="">
+              <input type="text" placeholder="项目来源(Not Null)" name="项目来源" required="">
+              <input type="text" placeholder="类型(Not Null)" name="类型" required="">
+              <input type="text" placeholder="起始年份(Not Null)" name="起始年份" required="">
+              <input type="text" placeholder="结束年份" name="结束年份">
               <button class="btn btn-warning" type="submit">插入</button>
             </form>
           </div>

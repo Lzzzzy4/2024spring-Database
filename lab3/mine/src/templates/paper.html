@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-
+<!-- CREATE TABLE Papers (
+    序号 INT PRIMARY KEY AUTO_INCREMENT,
+    论文名称 VARCHAR(256) NOT NULL,
+    发表期刊 VARCHAR(256) NOT NULL,
+    发表年份 DATE NOT NULL,
+    类型 INT CHECK (类型 IN (1, 2, 3, 4)),
+    级别 INT CHECK (级别 IN (1, 2, 3, 4, 5, 6))
+); -->
 <html lang="en">
 <head>
 <base href="./">
@@ -54,14 +61,12 @@
     <div class="small text-muted">缺省值不变</div>
     <input type="hidden" name="key" value="">
     <input type="hidden" name="type" value="update">
-    <label for="email"><b>工号</b></label>
-    <input type="text" placeholder="工号" name="工号">
-    <label for="email"><b>姓名</b></label>
-    <input type="text" placeholder="姓名" name="姓名">
-    <label for="email"><b>性别</b></label>
-    <input type="text" placeholder="性别" name="性别">
-    <label for="email"><b>职称</b></label>
-    <input type="text" placeholder="职称" name="职称">
+    <input type="text" placeholder="序号" name="序号">
+    <input type="text" placeholder="论文名称" name="论文名称">
+    <input type="text" placeholder="发表期刊" name="发表期刊">
+    <input type="text" placeholder="发表年份" name="发表年份">
+    <input type="text" placeholder="类型" name="类型">
+    <input type="text" placeholder="级别" name="级别">
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm()">取消</button>
   </form>
@@ -101,10 +106,12 @@
                 <h4 class="card-title mb-0">查询</h4>
                 <form class="form-insert" method="POST">
                   <input type="hidden" name="type" value="query">
-                  <input type="text" placeholder="工号" name="工号">
-                  <input type="text" placeholder="姓名" name="姓名">
-                  <input type="text" placeholder="性别" name="性别">
-                  <input type="text" placeholder="职称" name="职称">
+                  <input type="text" placeholder="序号" name="序号">
+                  <input type="text" placeholder="论文名称" name="论文名称">
+                  <input type="text" placeholder="发表期刊" name="发表期刊">
+                  <input type="text" placeholder="发表年份" name="发表年份">
+                  <input type="text" placeholder="类型" name="类型">
+                  <input type="text" placeholder="级别" name="级别">
                   <button class="btn btn-info" type="submit">查询</button>
                 </form>
           </div>
@@ -113,7 +120,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col-sm-5">
-                <h4 class="card-title mb-0">教师</h4>
+                <h4 class="card-title mb-0">论文</h4>
                 <!-- <div class="small text-muted">2021 6</div> -->
               </div>
             </div>
@@ -126,11 +133,13 @@
                     <th>操作</th>
                   </tr>
                   {% for i in content %}
-                  <tr id="{{ i.工号 }}">
-                    <td> {{ i.工号 }} </td>
-                    <td> {{ i.姓名 }} </td>
-                    <td> {{ i.性别 }} </td>
-                    <td> {{ i.职称 }} </td>
+                  <tr id="{{ i.序号 }}">
+                    <td> {{ i.序号 }} </td>
+                    <td> {{ i.论文名称 }} </td>
+                    <td> {{ i.发表期刊 }} </td>
+                    <td> {{ i.发表年份 }} </td>
+                    <td> {{ i.类型 }} </td>
+                    <td> {{ i.级别 }} </td>
                     <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
                       <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
@@ -146,10 +155,12 @@
             <!-- <div class="small text-muted">请勿缺省</div> -->
             <form class="form-insert" method="POST">
               <input type="hidden" name="type" value="insert">
-              <input type="text" placeholder="工号(Not Null)" name="工号" required="">
-              <input type="text" placeholder="姓名(Not Null)" name="姓名" required="">
-              <input type="text" placeholder="性别(Not Null)" name="性别" required="">
-              <input type="text" placeholder="职称(Not Null)" name="职称" required="">
+              <input type="text" placeholder="序号(Not Null)" name="工号" required="">
+              <input type="text" placeholder="论文名称(Not Null)" name="论文名称" required="">
+              <input type="text" placeholder="发表期刊(Not Null)" name="发表期刊" required="">
+              <input type="text" placeholder="发表年份(Not Null)" name="发表年份" required="">
+              <input type="text" placeholder="类型(Not Null)" name="类型" required="">
+              <input type="text" placeholder="级别(Not Null)" name="级别" required="">
               <button class="btn btn-warning" type="submit">插入</button>
             </form>
           </div>

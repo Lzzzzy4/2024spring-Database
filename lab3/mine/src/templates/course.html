@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-
+<!-- CREATE TABLE Courses (
+    课程号 VARCHAR(256) PRIMARY KEY,
+    课程名称 VARCHAR(256) NOT NULL,
+    学时数 INT NOT NULL,
+    课程性质 INT CHECK (课程性质 IN (1, 2))
+); -->
 <html lang="en">
 <head>
 <base href="./">
@@ -54,14 +59,18 @@
     <div class="small text-muted">缺省值不变</div>
     <input type="hidden" name="key" value="">
     <input type="hidden" name="type" value="update">
-    <label for="email"><b>工号</b></label>
-    <input type="text" placeholder="工号" name="工号">
-    <label for="email"><b>姓名</b></label>
-    <input type="text" placeholder="姓名" name="姓名">
-    <label for="email"><b>性别</b></label>
-    <input type="text" placeholder="性别" name="性别">
-    <label for="email"><b>职称</b></label>
-    <input type="text" placeholder="职称" name="职称">
+    <label for="email"><b>序号</b></label>
+    <input type="text" placeholder="序号" name="序号">
+    <label for="email"><b>论文名称</b></label>
+    <input type="text" placeholder="论文名称" name="论文名称">
+    <label for="email"><b>发表期刊</b></label>
+    <input type="text" placeholder="发表期刊" name="发表期刊">
+    <label for="email"><b>发表年份</b></label>
+    <input type="text" placeholder="发表年份" name="发表年份">
+    <label for="email"><b>类型</b></label>
+    <input type="text" placeholder="类型" name="类型">
+    <label for="email"><b>级别</b></label>
+    <input type="text" placeholder="级别" name="级别">
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm()">取消</button>
   </form>
@@ -101,10 +110,10 @@
                 <h4 class="card-title mb-0">查询</h4>
                 <form class="form-insert" method="POST">
                   <input type="hidden" name="type" value="query">
-                  <input type="text" placeholder="工号" name="工号">
-                  <input type="text" placeholder="姓名" name="姓名">
-                  <input type="text" placeholder="性别" name="性别">
-                  <input type="text" placeholder="职称" name="职称">
+                  <input type="text" placeholder="课程号" name="课程号">
+                  <input type="text" placeholder="课程名称" name="课程名称">
+                  <input type="text" placeholder="学时数" name="学时数">
+                  <input type="text" placeholder="课程性质" name="课程性质">
                   <button class="btn btn-info" type="submit">查询</button>
                 </form>
           </div>
@@ -113,7 +122,7 @@
           <div class="card-body">
             <div class="row">
               <div class="col-sm-5">
-                <h4 class="card-title mb-0">教师</h4>
+                <h4 class="card-title mb-0">课程</h4>
                 <!-- <div class="small text-muted">2021 6</div> -->
               </div>
             </div>
@@ -126,11 +135,11 @@
                     <th>操作</th>
                   </tr>
                   {% for i in content %}
-                  <tr id="{{ i.工号 }}">
-                    <td> {{ i.工号 }} </td>
-                    <td> {{ i.姓名 }} </td>
-                    <td> {{ i.性别 }} </td>
-                    <td> {{ i.职称 }} </td>
+                  <tr id="{{ i.课程号 }}">
+                    <td> {{ i.课程号 }} </td>
+                    <td> {{ i.课程名称 }} </td>
+                    <td> {{ i.学时数 }} </td>
+                    <td> {{ i.课程性质 }} </td>
                     <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
                       <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
@@ -146,10 +155,10 @@
             <!-- <div class="small text-muted">请勿缺省</div> -->
             <form class="form-insert" method="POST">
               <input type="hidden" name="type" value="insert">
-              <input type="text" placeholder="工号(Not Null)" name="工号" required="">
-              <input type="text" placeholder="姓名(Not Null)" name="姓名" required="">
-              <input type="text" placeholder="性别(Not Null)" name="性别" required="">
-              <input type="text" placeholder="职称(Not Null)" name="职称" required="">
+              <input type="text" placeholder="课程号(Not Null)" name="课程号" required="">
+              <input type="text" placeholder="课程名称(Not Null)" name="课程名称" required="">
+              <input type="text" placeholder="学时数(Not Null)" name="学时数" required="">
+              <input type="text" placeholder="课程性质(Not Null)" name="课程性质" required="">
               <button class="btn btn-warning" type="submit">插入</button>
             </form>
           </div>

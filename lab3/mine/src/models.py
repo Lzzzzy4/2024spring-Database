@@ -26,7 +26,7 @@ class Papers(db.Model):
     发表年份 = db.Column(db.Date, nullable=False)
     类型 = db.Column(db.Integer, nullable=False)
     级别 = db.Column(db.Integer, nullable=False)
-    工号 = db.relationship('Teachers', primaryjoin='Papers.工号 == Teachers.工号')
+    # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
 
 class Projects(db.Model):
     __tablename__ = 'Projects'
@@ -37,7 +37,7 @@ class Projects(db.Model):
     类型 = db.Column(db.Integer, nullable=False)
     起始年份 = db.Column(db.Date, nullable=False)
     结束年份 = db.Column(db.Date)
-    工号 = db.relationship('Teachers', primaryjoin='Projects.工号 == Teachers.工号')
+    # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
 
 class Courses(db.Model):
     __tablename__ = 'Courses'
@@ -46,7 +46,7 @@ class Courses(db.Model):
     课程名称 = db.Column(db.String(256), nullable=False)
     学时数 = db.Column(db.Integer, nullable=False)
     课程性质 = db.Column(db.Integer, nullable=False)
-    工号 = db.relationship('Teachers', primaryjoin='Courses.工号 == Teachers.工号')
+    # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
 
 class PublishingPapers(db.Model):
     __tablename__ = 'PublishingPapers'

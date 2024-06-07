@@ -8,6 +8,7 @@ from db_init import db, db2
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from models import User, Teachers, Papers, Projects, Courses, PublishingPapers, LeadingCourses, TakingProjects
+# from models import User, Teachers, Papers
 import time
 
 app = Flask(__name__)
@@ -25,22 +26,19 @@ def hello_world():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        print("login")
+        print(f"\nlogin\n")
         return render_template('login.html')
     else:
+        print(f"\n{request.form.get('type')}\n")
         if request.form.get('type') == 'signup':
             name = request.form.get('name')
             password = request.form.get('password')
-
             newUser = User(
                 name=name,
                 password=password,
             )
-
             db.session.add(newUser)
-            print("add")
             db.session.commit()
-            print("commit")
             return render_template('login.html')
         elif request.form.get('type') == 'login':
 
@@ -105,7 +103,7 @@ def teacher():
 
 @app.route('/paper', methods=['GET', 'POST'])
 def paper():
-    labels = ['序号', '论文名称', '发表期刊', '发表年份', '类型', '级别', '工号']
+    labels = ['序号', '论文名称', '发表期刊', '发表年份', '类型', '级别']
     result_query = db.session.query(Papers)
     if request.method == 'POST':
         if request.form.get('type') == 'query':
@@ -134,13 +132,14 @@ def paper():
                 发表期刊=request.form.get('发表期刊'),
                 发表年份=request.form.get('发表年份'),
                 类型=request.form.get('类型'),
-                级别=request.form.get('级别'),
-                工号=request.form.get('工号')
+                级别=request.form.get('级别')
             )
+
+    return render_template('paper.html', labels=labels, content=result_query.all())
 
 @app.route('/course', methods=['GET', 'POST'])
 def course():
-    labels = ['课程号', '课程名称', '学时数', '课程性质', '工号']
+    labels = ['课程号', '课程名称', '学时数', '课程性质']
     result_query = db.session.query(Courses)
     if request.method == 'POST':
         if request.form.get('type') == 'query':
@@ -167,15 +166,16 @@ def course():
                 课程号=request.form.get('课程号'),
                 课程名称=request.form.get('课程名称'),
                 学时数=request.form.get('学时数'),
-                课程性质=request.form.get('课程性质'),
-                工号=request.form.get('工号')
+                课程性质=request.form.get('课程性质')
             )
             db.session.add(new)
             db.session.commit()
 
+    return render_template('course.html', labels=labels, content=result_query.all())
+
 @app.route('/project', methods=['GET', 'POST'])
 def project():
-    labels = ['项目号', '项目名称', '项目来源', '类型', '起始年份', '结束年份', '工号']
+    labels = ['项目号', '项目名称', '项目来源', '类型', '起始年份', '结束年份']
     result_query = db.session.query(Projects)
     if request.method == 'POST':
         if request.form.get('type') == 'query':
@@ -204,11 +204,12 @@ def project():
                 项目来源=request.form.get('项目来源'),
                 类型=request.form.get('类型'),
                 起始年份=request.form.get('起始年份'),
-                结束年份=request.form.get('结束年份'),
-                工号=request.form.get('工号')
+                结束年份=request.form.get('结束年份')
             )
             db.session.add(new)
             db.session.commit()
+
+    return render_template('project.html', labels=labels, content=result_query.all())
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
