@@ -20,7 +20,7 @@ CREATE TABLE Teachers (
 
 -- Table for Papers
 CREATE TABLE Papers (
-    序号 INT PRIMARY KEY AUTO_INCREMENT,
+    序号 INT PRIMARY KEY,
     论文名称 VARCHAR(256) NOT NULL,
     发表期刊 VARCHAR(256) NOT NULL,
     发表年份 DATE NOT NULL,

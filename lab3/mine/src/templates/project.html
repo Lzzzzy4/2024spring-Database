@@ -16,43 +16,63 @@
 <title>教师教学科研登记系统</title>
 <link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet">
 <script>
-    function openForm(key) {
-      var form = document.getElementById("updateForm");
-      form.style.display = "block";
-      update_form.key.value = key;
-    }
+  function openForm(key) {
+    var form = document.getElementById("updateForm");
+    form.style.display = "block";
+    update_form.key.value = key;
+  }
 
-    function closeForm() {
-      document.getElementById("updateForm").style.display = "none";
-    }
+  function openForm_1(key) {
+    var form = document.getElementById("updateForm_1");
+    form.style.display = "block";
+    update_form_1.key.value = key;
+  }
 
-    function openwForm(key) {
-      document.getElementById("deleteWarning").style.display = "block";
-      delete_form.key.value = key;
-    }
+  function openwForm(key) {
+    var form = document.getElementById("deleteWarning")
+    form.style.display = "block";
+    delete_form.key.value = key;
+  }
 
-    function closewForm() {
-      document.getElementById("deleteWarning").style.display = "none";
-    } 
-  </script>
-<!-- </script>
-<script type="text/javascript">
-	function checkSelectSet(e) {
-		var input = e.target,
-			list = input.getAttribute('list'),
-			options = document.querySelectorAll('#' + list + ' option[value="'+input.value+'"]'),
-			hiddenInput = document.getElementById(input.getAttribute('id').replace('-display', ''));
+  function openwForm_1(key) {
+    var form = document.getElementById("deleteWarning_1")
+    form.style.display = "block";
+    delete_form_1.key.value = key;
+  }
 
-		if (options.length > 0) {
-			  hiddenInput.value = input.value;
-			  input.value = options[0].innerText;
-		  }
-	}
+  function closeForm(id) {
+    document.getElementById(id).style.display = "none";
+  }
+  let counter = 1;
+  function addInput() {
+    const container = document.getElementById('insert_1');
+    document.getElementById('cnt').value = counter;
+    // const div = document.createElement('div');
+    const input1 = document.createElement('input');
+    const input2 = document.createElement('input');
+    const input3 = document.createElement('input');
+    const br = document.createElement('br');
+    input1.type = 'text';
+    input2.type = 'text';
+    input3.type = 'text';
+    input1.setAttribute('required', "");
+    input2.setAttribute('required', "");
+    input3.setAttribute('required', "");
+    input1.name = '工号'+ counter;
+    input2.name = '排名'+ counter;
+    input3.name = '承担经费'+ counter;
+    input1.placeholder = '参与者' + counter + '工号';
+    input2.placeholder = '参与者' + counter + '排名';
+    input3.placeholder = '参与者' + counter + '承担经费';
+    container.appendChild(br);
+    container.appendChild(input1);
+    container.appendChild(input2);
+    container.appendChild(input3);
+    counter++;
+  }
 
-	function addDataListListener(eid) {
-		document.querySelector('#'+eid).addEventListener('input', checkSelectSet)
-	}
-</script> -->
+</script>
+
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
@@ -62,13 +82,9 @@
     <div class="small text-muted">缺省值不变</div>
     <input type="hidden" name="key" value="">
     <input type="hidden" name="type" value="update">
-    <label for="email"><b>项目号</b></label>
     <input type="text" placeholder="项目号" name="项目号">
-    <label for="email"><b>项目名称</b></label>
     <input type="text" placeholder="项目名称" name="项目名称">
-    <label for="email"><b>项目来源</b></label>
     <input type="text" placeholder="项目来源" name="项目来源">
-    <label for="email"><b>项目类型</b></label>
     <input type="text" placeholder="项目类型" name="项目类型" list="type_list">
     <datalist id="type_list">
       <option value="1">国家级项目</option>
@@ -84,9 +100,25 @@
     <label for="email"><b>结束月份</b></label>
     <input type="text" placeholder="结束月份" name="结束月份">
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
-    <button type="button" class="btn bg-danger" onclick="closeForm()">取消</button>
+    <button type="button" class="btn bg-danger" onclick="closeForm('updateForm')">取消</button>
   </form>
 </div>
+
+<div class="form-popup" id="updateForm_1">
+  <form class="form-container" name="update_form_1" method="POST">
+    <h1>更新</h1>
+    <div class="small text-muted">缺省值不变</div>
+    <input type="hidden" name="key" value="">
+    <input type="hidden" name="type" value="update_1">
+    <input type="text" placeholder="工号" name="工号">
+    <input type="text" placeholder="项目号" name="项目号">
+    <input type="text" placeholder="排名" name="排名">
+    <input type="text" placeholder="承担经费" name="承担经费">
+    <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
+    <button type="button" class="btn bg-danger" onclick="closeForm('updateForm_1')">取消</button>
+  </form>
+</div>
+
 <div class="form-popup" id="deleteWarning">
   <form class="form-container" name="delete_form" method="POST">
     <p> </p>
@@ -96,9 +128,23 @@
     <input type="hidden" name="type" value="delete">
     <input type="hidden" name="key" value="">
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
-    <button type="button" class="btn bg-danger" onclick="closewForm();">取消</button>
+    <button type="button" class="btn bg-danger" onclick="closewForm('deleteWarning');">取消</button>
   </form>
 </div>
+
+<div class="form-popup" id="deleteWarning_1">
+  <form class="form-container" name="delete_form_1" method="POST">
+    <p> </p>
+    <h2>确认删除？</h2>
+    <p> </p>
+    <p> </p>
+    <input type="hidden" name="type" value="delete_1">
+    <input type="hidden" name="key" value="">
+    <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
+    <button type="button" class="btn bg-danger" onclick="closeForm('deleteWarning');">取消</button>
+  </form>
+</div>
+
 <header class="app-header navbar"><span class="badge badge-light">数据库系统及应用Lab</span> </header>
 <div class="app-body">
   <div class="sidebar">
@@ -234,13 +280,26 @@
                     <td> {{ i.项目名称 }} </td>
                     <td> {{ i.排名 }} </td>
                     <td> {{ i.承担经费 }} </td>
-                    <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
-                      <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
+                    <td><label class="btn btn-success" onclick="openForm_1(this.parentNode.parentNode.id)">更新</label>
+                      <label class="btn bg-danger" onclick="openwForm_1(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
                   {% endfor %}
                 </table>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="insert-container">
+            <h4 class="card-title mb-0">添加参与者</h4>
+            <form class="form-insert" method="POST" id="insert_1">
+              <input type="hidden" name="type" value="insert_1">
+              <input type="hidden" name="cnt" id="cnt">
+              <input type="text" placeholder="项目号" name="项目号" required="">
+              <button class="btn btn-warning" type="submit">新建</button>
+              <button class="btn btn-info" onclick="addInput()" type="button">增加参与者</button>
+            </form>
           </div>
         </div>
 
