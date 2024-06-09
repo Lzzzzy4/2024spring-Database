@@ -10,6 +10,7 @@ from sqlalchemy import func
 from models import User, Teachers, Papers, Projects, Courses, PublishingPapers, LeadingCourses, TakingProjects
 # from models import User, Teachers, Papers
 import time
+import copy
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -18,18 +19,36 @@ db.init_app(app)
 
 cursor = db2.cursor()
 
+gender = {1: '男', 2: '女'}
+title = {1: '博士后', 2: '助教', 3: '讲师', 4: '副教授', 5: '特任教授', 6: '教授', 7: '助理研究员', 8: '特任副研究员', 9: '副研究员', 10: '特任研究员', 11: '研究员'}
+paper_type = {1: 'full paper', 2: 'short paper', 3: 'poster paper', 4: 'demo paper'}
+paper_level = {1: 'CCF-A', 2: 'CCF-B', 3: 'CCF-C', 4: '中文 CCF-A', 5: '中文 CCF-B', 6: '无级别'}
+project_type = {1: '国家级项目', 2: '省部级项目', 3: '市厅级项目', 4: '企业合作项目', 5: '其它类型项目'}
+course_type = {1: '本科生课程', 2: '研究生课程'}
+
+def trans(dic):
+    # return dic
+    dic = copy.deepcopy(dic)
+    for i in dic:
+        print('\n')
+        print(i, type(i))
+        if getattr(i, "性别", None): i.性别 = gender[i.性别]
+        if getattr(i, "职称", None): i.职称 = title[i.职称]
+        if getattr(i, "论文类型", None): i.论文类型 = paper_type[i.论文类型]
+        if getattr(i, "级别", None): i.级别 = paper_level[i.级别]
+        if getattr(i, "项目类型", None): i.项目类型 = project_type[i.项目类型]
+        if getattr(i, "课程性质", None): i.课程性质 = course_type[i.课程性质]
+    return dic      
 
 @app.route('/')
 def hello_world():
-    return redirect( url_for('login') )
+    return redirect( url_for('teacher') )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        print(f"\nlogin\n")
         return render_template('login.html')
     else:
-        print(f"\n{request.form.get('type')}\n")
         if request.form.get('type') == 'signup':
             name = request.form.get('name')
             password = request.form.get('password')
@@ -66,12 +85,10 @@ def index():
 
 @app.route('/teacher', methods=['GET', 'POST'])
 def teacher():
-    labels = ['工号', '姓名', '性别', '职称']
+    labels = ['工号', '姓名', '职称', '性别']
     result_query = db.session.query(Teachers)
     if request.method == 'POST':
-        # print(f"\ntype: {request.form.get('type')}\n")
         if request.form.get('type') == 'query':
-            idx = []
             for i in range(len(labels)):
                 req_id = request.form.get(labels[i])
                 if req_id != "":
@@ -98,13 +115,15 @@ def teacher():
             )
             db.session.add(new)
             db.session.commit()
-
-    return render_template('teacher.html', labels=labels, content=result_query.all())
+    result = trans(result_query.all())
+    return render_template('teacher.html', labels=labels, content=result)
 
 @app.route('/paper', methods=['GET', 'POST'])
 def paper():
-    labels = ['序号', '论文名称', '发表期刊', '发表年份', '类型', '级别']
+    labels = ['序号', '论文名称', '发表期刊', '发表年份', '论文类型', '级别']
     result_query = db.session.query(Papers)
+    labels1 = ['工号', '姓名', '论文序号', '论文名称', '排名', '是否通讯作者']
+    result_query1 = db.session.query(None)
     if request.method == 'POST':
         if request.form.get('type') == 'query':
             idx = []
@@ -131,16 +150,29 @@ def paper():
                 论文名称=request.form.get('论文名称'),
                 发表期刊=request.form.get('发表期刊'),
                 发表年份=request.form.get('发表年份'),
-                类型=request.form.get('类型'),
+                论文类型=request.form.get('论文类型'),
                 级别=request.form.get('级别')
             )
-
-    return render_template('paper.html', labels=labels, content=result_query.all())
+            db.session.add(new)
+            db.session.commit()
+        elif request.form.get('type') == 'query_1':
+            teacher = request.form.get('工号')
+            num = request.form.get('序号')
+            if teacher != "" or num != "":
+                result_query1 = db.session.query(Teachers.工号, Teachers.姓名, Papers.序号, Papers.论文名称, PublishingPapers.排名, PublishingPapers.是否通讯作者).join(PublishingPapers, Teachers.工号 == PublishingPapers.工号).join(Papers, Papers.序号 == PublishingPapers.序号)
+                if teacher != "": result_query1 = result_query1.filter(Teachers.工号 == teacher)
+                if num != "": result_query1 = result_query1.filter(Papers.序号 == num)
+                
+    result = trans(result_query.all())
+    result1 = trans(result_query1.all())
+    return render_template('paper.html', labels=labels, content=result, labels1=labels1, content1=result1)
 
 @app.route('/course', methods=['GET', 'POST'])
 def course():
     labels = ['课程号', '课程名称', '学时数', '课程性质']
     result_query = db.session.query(Courses)
+    labels1 = ['工号', '姓名', '课程号', '课程名', '年份', '学期', '承担学时']
+    result_query1 = db.session.query(None)
     if request.method == 'POST':
         if request.form.get('type') == 'query':
             idx = []
@@ -170,13 +202,24 @@ def course():
             )
             db.session.add(new)
             db.session.commit()
+        elif request.form.get('type') == 'query_1':
+            teacher = request.form.get('工号')
+            num = request.form.get('课程号')
+            if teacher != "" or num != "":
+                result_query1 = db.session.query(Teachers.工号, Teachers.姓名, Courses.课程号, Courses.课程名称, LeadingCourses.年份, LeadingCourses.学期, LeadingCourses.承担学时).join(LeadingCourses, Teachers.工号 == LeadingCourses.工号).join(Courses, Courses.课程号 == LeadingCourses.课程号)
+                if teacher != "": result_query1 = result_query1.filter(Teachers.工号 == teacher)
+                if num != "": result_query1 = result_query1.filter(Courses.课程号 == num)
 
-    return render_template('course.html', labels=labels, content=result_query.all())
+    result = trans(result_query.all())
+    result1 = trans(result_query1.all())
+    return render_template('course.html', labels=labels, content=result, labels1=labels1, content1=result1)
 
 @app.route('/project', methods=['GET', 'POST'])
 def project():
-    labels = ['项目号', '项目名称', '项目来源', '类型', '起始年份', '结束年份']
+    labels = ['项目号', '项目名称', '项目来源', '项目类型', '总经费', '起始月份', '结束月份']
     result_query = db.session.query(Projects)
+    labels1 = ['工号', '姓名', '项目号', '项目名称', '排名', '承担经费']
+    result_query1 = db.session.query(None)
     if request.method == 'POST':
         if request.form.get('type') == 'query':
             idx = []
@@ -202,14 +245,24 @@ def project():
                 项目号=request.form.get('项目号'),
                 项目名称=request.form.get('项目名称'),
                 项目来源=request.form.get('项目来源'),
-                类型=request.form.get('类型'),
-                起始年份=request.form.get('起始年份'),
-                结束年份=request.form.get('结束年份')
+                项目类型=request.form.get('项目类型'),
+                总经费=request.form.get('总经费'),
+                起始月份=request.form.get('起始月份'),
+                结束月份=request.form.get('结束月份')
             )
             db.session.add(new)
             db.session.commit()
+        elif request.form.get('type') == 'query_1':
+            teacher = request.form.get('工号')
+            num = request.form.get('项目号')
+            if teacher != "" or num != "":
+                result_query1 = db.session.query(Teachers.工号, Teachers.姓名, Projects.项目号, Projects.项目名称, TakingProjects.排名, TakingProjects.承担经费).join(TakingProjects, Teachers.工号 == TakingProjects.工号).join(Projects, Projects.项目号 == TakingProjects.项目号)
+                if teacher != "": result_query1 = result_query1.filter(Teachers.工号 == teacher)
+                if num != "": result_query1 = result_query1.filter(Projects.项目号 == num)
 
-    return render_template('project.html', labels=labels, content=result_query.all())
+    result = trans(result_query.all())
+    result1 = trans(result_query1.all())
+    return render_template('project.html', labels=labels, content=result, labels1=labels1, content1=result1)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)

@@ -13,24 +13,6 @@
 <title>教师教学科研登记系统</title>
 <link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet">
 <script>
-    function tableFilter() {
-      var input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("prependedInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("bank-table");
-      tr = table.getElementsByTagName("tr");
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
-        }
-      }
-    }
     function openForm(key) {
       var form = document.getElementById("updateForm");
       form.style.display = "block";
@@ -50,27 +32,45 @@
       document.getElementById("deleteWarning").style.display = "none";
     } 
   </script>
+<!-- </script>
+<script type="text/javascript">
+	function checkSelectSet(e) {
+		var input = e.target,
+			list = input.getAttribute('list'),
+			options = document.querySelectorAll('#' + list + ' option[value="'+input.value+'"]'),
+			hiddenInput = document.getElementById(input.getAttribute('id').replace('-display', ''));
+
+		if (options.length > 0) {
+			  hiddenInput.value = input.value;
+			  input.value = options[0].innerText;
+		  }
+	}
+
+	function addDataListListener(eid) {
+		document.querySelector('#'+eid).addEventListener('input', checkSelectSet)
+	}
+</script> -->
 </head>
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
 <div class="form-popup" id="updateForm">
   <form class="form-container" name="update_form" method="POST">
-    <h1>更新表单</h1>
+    <h1>更新</h1>
     <div class="small text-muted">缺省值不变</div>
     <input type="hidden" name="key" value="">
     <input type="hidden" name="type" value="update">
-    <label for="email"><b>序号</b></label>
-    <input type="text" placeholder="序号" name="序号">
-    <label for="email"><b>论文名称</b></label>
-    <input type="text" placeholder="论文名称" name="论文名称">
-    <label for="email"><b>发表期刊</b></label>
-    <input type="text" placeholder="发表期刊" name="发表期刊">
-    <label for="email"><b>发表年份</b></label>
-    <input type="text" placeholder="发表年份" name="发表年份">
-    <label for="email"><b>类型</b></label>
-    <input type="text" placeholder="类型" name="类型">
-    <label for="email"><b>级别</b></label>
-    <input type="text" placeholder="级别" name="级别">
+    <label for="email"><b>课程号</b></label>
+    <input type="text" placeholder="课程号" name="课程号">
+    <label for="email"><b>课程名称</b></label>
+    <input type="text" placeholder="课程名称" name="课程名称">
+    <label for="email"><b>学时数</b></label>
+    <input type="text" placeholder="学时数" name="学时数">
+    <label for="email"><b>课程性质</b></label>
+    <input type="text" placeholder="课程性质" name="课程性质" list="type_list">
+    <datalist id="type_list">
+      <option value="1">本科生课程</option>
+      <option value="2">研究生课程</option>
+    </datalist>
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm()">取消</button>
   </form>
@@ -93,7 +93,7 @@
     <nav class="sidebar-nav">
       <ul class="nav">
         <li class="nav-title">教师教学科研登记系统</li>
-        <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a>
+        <!-- <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a> -->
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="teacher"> <i class="nav-icon icon-puzzle"></i> 教师</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="paper"> <i class="nav-icon icon-cursor"></i> 论文</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="course"> <i class="nav-icon icon-cursor"></i> 课程</a> </li>
@@ -113,7 +113,11 @@
                   <input type="text" placeholder="课程号" name="课程号">
                   <input type="text" placeholder="课程名称" name="课程名称">
                   <input type="text" placeholder="学时数" name="学时数">
-                  <input type="text" placeholder="课程性质" name="课程性质">
+                  <input type="text" placeholder="课程性质" name="课程性质" list="type_list">
+                  <datalist id="type_list">
+                    <option value="1">本科生课程</option>
+                    <option value="2">研究生课程</option>
+                  </datalist>
                   <button class="btn btn-info" type="submit">查询</button>
                 </form>
           </div>
@@ -151,16 +155,66 @@
         </div>
         <div class="card">
           <div class="insert-container">
-            <h4 class="card-title mb-0">插入</h4>
+            <h4 class="card-title mb-0">新建</h4>
             <!-- <div class="small text-muted">请勿缺省</div> -->
             <form class="form-insert" method="POST">
               <input type="hidden" name="type" value="insert">
-              <input type="text" placeholder="课程号(Not Null)" name="课程号" required="">
-              <input type="text" placeholder="课程名称(Not Null)" name="课程名称" required="">
-              <input type="text" placeholder="学时数(Not Null)" name="学时数" required="">
-              <input type="text" placeholder="课程性质(Not Null)" name="课程性质" required="">
-              <button class="btn btn-warning" type="submit">插入</button>
+              <input type="text" placeholder="课程号" name="课程号" required="">
+              <input type="text" placeholder="课程名称" name="课程名称" required="">
+              <input type="text" placeholder="学时数" name="学时数" required="">
+              <input type="text" placeholder="课程性质" name="课程性质" required="" list="type_list">
+              <datalist id="type_list">
+                <option value="1">本科生课程</option>
+                <option value="2">研究生课程</option>
+              </datalist>
+              <button class="btn btn-warning" type="submit">新建</button>
             </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="insert-container">
+                <h4 class="card-title mb-0">查询课程教学情况</h4>
+                <form class="form-insert" method="POST">
+                  <input type="hidden" name="type" value="query_1">
+                  <input type="text" placeholder="老师工号" name="工号">
+                  <input type="text" placeholder="课程号" name="课程号">
+                  <button class="btn btn-info" type="submit">查询</button>
+                </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-5">
+                <h4 class="card-title mb-0">课程教学</h4>
+              </div>
+            </div>
+            <div>             
+              <div>
+                <table id="bank-table">
+                  <tr> {% for i in labels1 %}
+                    <th> {{ i }} </th>
+                    {% endfor %}
+                    <th>操作</th>
+                  </tr>
+                  {% for i in content1 %}
+                  <tr id="{{ i.工号 }}">
+                    <td> {{ i.工号 }} </td>
+                    <td> {{ i.姓名 }} </td>
+                    <td> {{ i.课程号 }} </td>
+                    <td> {{ i.课程名称 }} </td>
+                    <td> {{ i.年份 }} </td>
+                    <td> {{ '春季学期' if i.学期==1 else '夏季学期' if i.学期==2 else '秋季学期' }} </td>
+                    <td> {{ i.承担学时 }} </td>
+                    <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
+                      <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
 db = SQLAlchemy()
-
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -24,7 +22,7 @@ class Papers(db.Model):
     论文名称 = db.Column(db.String(256), nullable=False)
     发表期刊 = db.Column(db.String(256), nullable=False)
     发表年份 = db.Column(db.Date, nullable=False)
-    类型 = db.Column(db.Integer, nullable=False)
+    论文类型 = db.Column(db.Integer, nullable=False)
     级别 = db.Column(db.Integer, nullable=False)
     # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
 
@@ -34,9 +32,10 @@ class Projects(db.Model):
     项目号 = db.Column(db.String(5), primary_key=True)
     项目名称 = db.Column(db.String(256), nullable=False)
     项目来源 = db.Column(db.String(256), nullable=False)
-    类型 = db.Column(db.Integer, nullable=False)
-    起始年份 = db.Column(db.Date, nullable=False)
-    结束年份 = db.Column(db.Date)
+    项目类型 = db.Column(db.Integer, nullable=False)
+    总经费 = db.Column(db.Float, nullable=False)
+    起始月份 = db.Column(db.Date, nullable=False)
+    结束月份 = db.Column(db.Date)
     # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
 
 class Courses(db.Model):

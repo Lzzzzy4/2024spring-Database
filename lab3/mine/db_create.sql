@@ -24,7 +24,7 @@ CREATE TABLE Papers (
     论文名称 VARCHAR(256) NOT NULL,
     发表期刊 VARCHAR(256) NOT NULL,
     发表年份 DATE NOT NULL,
-    类型 INT CHECK (类型 IN (1, 2, 3, 4)),
+    论文类型 INT CHECK (论文类型 IN (1, 2, 3, 4)),
     级别 INT CHECK (级别 IN (1, 2, 3, 4, 5, 6))
 );
 
@@ -33,9 +33,10 @@ CREATE TABLE Projects (
     项目号 CHAR(5) PRIMARY KEY,
     项目名称 VARCHAR(256) NOT NULL,
     项目来源 VARCHAR(256) NOT NULL,
-    类型 INT CHECK (类型 IN (1, 2, 3, 4, 5)),
-    起始年份 DATE NOT NULL,
-    结束年份 DATE
+    项目类型 INT CHECK (项目类型 IN (1, 2, 3, 4, 5)),
+    总经费 FLOAT NOT NULL,
+    起始月份 DATE NOT NULL,
+    结束月份 DATE
 );
 
 -- Table for Courses
@@ -90,22 +91,22 @@ INSERT INTO Papers VALUES (1, '论文1', '期刊1', '2020-01-01', 1, 1);
 INSERT INTO Papers VALUES (2, '论文2', '期刊2', '2020-01-01', 2, 2);
 INSERT INTO Papers VALUES (3, '论文3', '期刊3', '2020-01-01', 3, 3);
 
-INSERT INTO Projects VALUES ('00001', '项目1', '来源1', 1, '2020-01-01', '2020-01-01');
-INSERT INTO Projects VALUES ('00002', '项目2', '来源2', 2, '2020-01-01', '2020-01-01');
-INSERT INTO Projects VALUES ('00003', '项目3', '来源3', 3, '2020-01-01', '2020-01-01');
+INSERT INTO Projects VALUES ('A0001', '项目1', '来源1', 1, 100, '2020-01-01', '2020-01-01');
+INSERT INTO Projects VALUES ('A0002', '项目2', '来源2', 2, 200, '2020-01-01', '2020-01-01');
+INSERT INTO Projects VALUES ('A0003', '项目3', '来源3', 3, 300, '2020-01-01', '2020-01-01');
 
-INSERT INTO Courses VALUES ('课程1', '课程1', 1, 1);
-INSERT INTO Courses VALUES ('课程2', '课程2', 2, 2);
-INSERT INTO Courses VALUES ('课程3', '课程3', 3, 1);
+INSERT INTO Courses VALUES ('B0001', '课程1', 1, 1);
+INSERT INTO Courses VALUES ('B0002', '课程2', 2, 2);
+INSERT INTO Courses VALUES ('B0003', '课程3', 3, 1);
 
 INSERT INTO PublishingPapers VALUES ('00001', 1, 1, TRUE);
 INSERT INTO PublishingPapers VALUES ('00002', 2, 2, FALSE);
 INSERT INTO PublishingPapers VALUES ('00003', 3, 3, TRUE);
 
-INSERT INTO LeadingCourses VALUES ('00001', '课程1', 2020, 1, 1);
-INSERT INTO LeadingCourses VALUES ('00002', '课程2', 2020, 2, 2);
-INSERT INTO LeadingCourses VALUES ('00003', '课程3', 2020, 1, 3);
+INSERT INTO LeadingCourses VALUES ('00001', 'B0001', 2020, 1, 1);
+INSERT INTO LeadingCourses VALUES ('00002', 'B0002', 2020, 2, 2);
+INSERT INTO LeadingCourses VALUES ('00003', 'B0003', 2020, 1, 3);
 
-INSERT INTO TakingProjects VALUES ('00001', '00001', 1, 1.0);
-INSERT INTO TakingProjects VALUES ('00002', '00002', 2, 2.0);
-INSERT INTO TakingProjects VALUES ('00003', '00003', 3, 3.0);
+INSERT INTO TakingProjects VALUES ('00001', 'A0001', 1, 1.0);
+INSERT INTO TakingProjects VALUES ('00002', 'A0002', 2, 2.0);
+INSERT INTO TakingProjects VALUES ('00003', 'A0003', 3, 3.0);

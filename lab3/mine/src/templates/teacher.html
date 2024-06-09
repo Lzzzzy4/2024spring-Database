@@ -8,24 +8,6 @@
 <title>教师教学科研登记系统</title>
 <link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet">
 <script>
-    function tableFilter() {
-      var input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("prependedInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("bank-table");
-      tr = table.getElementsByTagName("tr");
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[0];
-        if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
-        }
-      }
-    }
     function openForm(key) {
       var form = document.getElementById("updateForm");
       form.style.display = "block";
@@ -50,7 +32,7 @@
 <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
 <div class="form-popup" id="updateForm">
   <form class="form-container" name="update_form" method="POST">
-    <h1>更新表单</h1>
+    <h1>更新</h1>
     <div class="small text-muted">缺省值不变</div>
     <input type="hidden" name="key" value="">
     <input type="hidden" name="type" value="update">
@@ -58,10 +40,27 @@
     <input type="text" placeholder="工号" name="工号">
     <label for="email"><b>姓名</b></label>
     <input type="text" placeholder="姓名" name="姓名">
-    <label for="email"><b>性别</b></label>
-    <input type="text" placeholder="性别" name="性别">
     <label for="email"><b>职称</b></label>
-    <input type="text" placeholder="职称" name="职称">
+    <input type="text" placeholder="职称" name="职称" list="title_list">
+    <datalist id="title_list">
+      <option value="1">博士后</option>
+      <option value="2">助教</option>
+      <option value="3">讲师</option>
+      <option value="4">副教授</option>
+      <option value="5">特任教授</option>
+      <option value="6">教授</option>
+      <option value="7">助理研究员</option>
+      <option value="8">特任副研究员</option>
+      <option value="9">副研究员</option>
+      <option value="10">特任研究员</option>
+      <option value="11">研究员</option>
+    </datalist>
+    <label for="email"><b>性别</b></label>
+    <input type="text" placeholder="性别" name="性别" list="gender_list">
+    <datalist id="gender_list">
+      <option value="1">男</option>
+      <option value="2">女</option>
+    </datalist>
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm()">取消</button>
   </form>
@@ -84,7 +83,7 @@
     <nav class="sidebar-nav">
       <ul class="nav">
         <li class="nav-title">教师教学科研登记系统</li>
-        <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a>
+        <!-- <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a> -->
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="teacher"> <i class="nav-icon icon-puzzle"></i> 教师</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="paper"> <i class="nav-icon icon-cursor"></i> 论文</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="course"> <i class="nav-icon icon-cursor"></i> 课程</a> </li>
@@ -103,8 +102,25 @@
                   <input type="hidden" name="type" value="query">
                   <input type="text" placeholder="工号" name="工号">
                   <input type="text" placeholder="姓名" name="姓名">
-                  <input type="text" placeholder="性别" name="性别">
-                  <input type="text" placeholder="职称" name="职称">
+                  <input type="text" placeholder="职称" name="职称" list="title_list" id="title">
+                  <datalist id="title_list">
+                    <option value="1">博士后</option>
+                    <option value="2">助教</option>
+                    <option value="3">讲师</option>
+                    <option value="4">副教授</option>
+                    <option value="5">特任教授</option>
+                    <option value="6">教授</option>
+                    <option value="7">助理研究员</option>
+                    <option value="8">特任副研究员</option>
+                    <option value="9">副研究员</option>
+                    <option value="10">特任研究员</option>
+                    <option value="11">研究员</option>
+                  </datalist>
+                  <input type="text" placeholder="性别" name="性别" list="gender_list" id="gender">
+                  <datalist id="gender_list">
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                  </datalist>
                   <button class="btn btn-info" type="submit">查询</button>
                 </form>
           </div>
@@ -129,8 +145,8 @@
                   <tr id="{{ i.工号 }}">
                     <td> {{ i.工号 }} </td>
                     <td> {{ i.姓名 }} </td>
-                    <td> {{ i.性别 }} </td>
                     <td> {{ i.职称 }} </td>
+                    <td> {{ i.性别 }} </td>
                     <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
                       <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
@@ -142,15 +158,32 @@
         </div>
         <div class="card">
           <div class="insert-container">
-            <h4 class="card-title mb-0">插入</h4>
+            <h4 class="card-title mb-0">新建</h4>
             <!-- <div class="small text-muted">请勿缺省</div> -->
             <form class="form-insert" method="POST">
               <input type="hidden" name="type" value="insert">
-              <input type="text" placeholder="工号(Not Null)" name="工号" required="">
-              <input type="text" placeholder="姓名(Not Null)" name="姓名" required="">
-              <input type="text" placeholder="性别(Not Null)" name="性别" required="">
-              <input type="text" placeholder="职称(Not Null)" name="职称" required="">
-              <button class="btn btn-warning" type="submit">插入</button>
+              <input type="text" placeholder="工号" name="工号" required="">
+              <input type="text" placeholder="姓名" name="姓名" required="">
+              <input type="text" placeholder="职称" name="职称" required="" list="title_list">
+              <datalist id="title_list">
+                <option value="1">博士后</option>
+                <option value="2">助教</option>
+                <option value="3">讲师</option>
+                <option value="4">副教授</option>
+                <option value="5">特任教授</option>
+                <option value="6">教授</option>
+                <option value="7">助理研究员</option>
+                <option value="8">特任副研究员</option>
+                <option value="9">副研究员</option>
+                <option value="10">特任研究员</option>
+                <option value="11">研究员</option>
+              </datalist>
+              <input type="text" placeholder="性别" name="性别" required="" list="gender_list">
+              <datalist id="gender_list">
+                <option value="1">男</option>
+                <option value="2">女</option>
+              </datalist>
+              <button class="btn btn-warning" type="submit">新建</button>
             </form>
           </div>
         </div>
