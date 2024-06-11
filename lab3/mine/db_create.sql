@@ -23,7 +23,7 @@ CREATE TABLE Papers (
     序号 INT PRIMARY KEY,
     论文名称 VARCHAR(256) NOT NULL,
     发表期刊 VARCHAR(256) NOT NULL,
-    发表年份 DATE NOT NULL,
+    发表年份 INT NOT NULL,
     论文类型 INT CHECK (论文类型 IN (1, 2, 3, 4)),
     级别 INT CHECK (级别 IN (1, 2, 3, 4, 5, 6))
 );
@@ -35,8 +35,8 @@ CREATE TABLE Projects (
     项目来源 VARCHAR(256) NOT NULL,
     项目类型 INT CHECK (项目类型 IN (1, 2, 3, 4, 5)),
     总经费 FLOAT NOT NULL,
-    起始月份 DATE NOT NULL,
-    结束月份 DATE
+    起始年份 INT NOT NULL,
+    结束年份 INT
 );
 
 -- Table for Courses
@@ -87,13 +87,13 @@ INSERT INTO Teachers VALUES ('00001', '张三', 1, 1);
 INSERT INTO Teachers VALUES ('00002', '李四', 1, 2);
 INSERT INTO Teachers VALUES ('00003', '王五', 1, 3);
 
-INSERT INTO Papers VALUES (1, '论文1', '期刊1', '2020-01-01', 1, 1);
-INSERT INTO Papers VALUES (2, '论文2', '期刊2', '2020-01-01', 2, 2);
-INSERT INTO Papers VALUES (3, '论文3', '期刊3', '2020-01-01', 3, 3);
+INSERT INTO Papers VALUES (1, '论文1', '期刊1', 2020, 1, 1);
+INSERT INTO Papers VALUES (2, '论文2', '期刊2', 2020, 2, 2);
+INSERT INTO Papers VALUES (3, '论文3', '期刊3', 2020, 3, 3);
 
-INSERT INTO Projects VALUES ('A0001', '项目1', '来源1', 1, 100, '2020-01-01', '2020-01-01');
-INSERT INTO Projects VALUES ('A0002', '项目2', '来源2', 2, 200, '2020-01-01', '2020-01-01');
-INSERT INTO Projects VALUES ('A0003', '项目3', '来源3', 3, 300, '2020-01-01', '2020-01-01');
+INSERT INTO Projects VALUES ('A0001', '项目1', '来源1', 1, 100, 2020, 2020);
+INSERT INTO Projects VALUES ('A0002', '项目2', '来源2', 2, 200, 2020, 2020);
+INSERT INTO Projects VALUES ('A0003', '项目3', '来源3', 3, 300, 2020, 2020);
 
 INSERT INTO Courses VALUES ('B0001', '课程1', 1, 1);
 INSERT INTO Courses VALUES ('B0002', '课程2', 2, 2);

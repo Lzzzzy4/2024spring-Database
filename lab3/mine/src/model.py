@@ -21,7 +21,7 @@ class Papers(db.Model):
     序号 = db.Column(db.Integer, primary_key=True)
     论文名称 = db.Column(db.String(256), nullable=False)
     发表期刊 = db.Column(db.String(256), nullable=False)
-    发表年份 = db.Column(db.Date, nullable=False)
+    发表年份 = db.Column(db.Integer, nullable=False)
     论文类型 = db.Column(db.Integer, nullable=False)
     级别 = db.Column(db.Integer, nullable=False)
     # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
@@ -34,8 +34,8 @@ class Projects(db.Model):
     项目来源 = db.Column(db.String(256), nullable=False)
     项目类型 = db.Column(db.Integer, nullable=False)
     总经费 = db.Column(db.Float, nullable=False)
-    起始月份 = db.Column(db.Date, nullable=False)
-    结束月份 = db.Column(db.Date)
+    起始年份 = db.Column(db.Integer, nullable=False)
+    结束年份 = db.Column(db.Integer)
     # 工号 = db.Column(db.ForeignKey('Teachers.工号', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
 
 class Courses(db.Model):
@@ -80,6 +80,50 @@ class TakingProjects(db.Model):
 
     teacher = db.relationship('Teachers', primaryjoin='TakingProjects.工号 == Teachers.工号', backref='taking_projects')
     project = db.relationship('Projects', primaryjoin='TakingProjects.项目号 == Projects.项目号', backref='taking_projects')
+
+gender = {1: '男', 2: '女'}
+title = {1: '博士后', 2: '助教', 3: '讲师', 4: '副教授', 5: '特任教授', 6: '教授', 7: '助理研究员', 8: '特任副研究员', 9: '副研究员', 10: '特任研究员', 11: '研究员'}
+paper_type = {1: 'full paper', 2: 'short paper', 3: 'poster paper', 4: 'demo paper'}
+paper_level = {1: 'CCF-A', 2: 'CCF-B', 3: 'CCF-C', 4: '中文 CCF-A', 5: '中文 CCF-B', 6: '无级别'}
+project_type = {1: '国家级项目', 2: '省部级项目', 3: '市厅级项目', 4: '企业合作项目', 5: '其它类型项目'}
+semester = {1: '春季学期', 2: '夏季学期', 3: '秋季学期'}
+course_type = {1: '本科生课程', 2: '研究生课程'}
+
+class Display():
+    def __init__(self, query):
+        self.工号 = None if not hasattr(query, '工号') else query.工号
+        self.姓名 = None if not hasattr(query, '姓名') else query.姓名
+        self.性别 = None if not hasattr(query, '性别') else gender[query.性别]
+        self.职称 = None if not hasattr(query, '职称') else title[query.职称]
+        self.序号 = None if not hasattr(query, '序号') else query.序号
+        self.论文名称 = None if not hasattr(query, '论文名称') else query.论文名称
+        self.发表期刊 = None if not hasattr(query, '发表期刊') else query.发表期刊
+        self.发表年份 = None if not hasattr(query, '发表年份') else query.发表年份
+        self.论文类型 = None if not hasattr(query, '论文类型') else paper_type[query.论文类型]
+        self.级别 = None if not hasattr(query, '级别') else paper_level[query.级别]
+        self.项目号 = None if not hasattr(query, '项目号') else query.项目号
+        self.项目名称 = None if not hasattr(query, '项目名称') else query.项目名称
+        self.项目来源 = None if not hasattr(query, '项目来源') else query.项目来源
+        self.项目类型 = None if not hasattr(query, '项目类型') else project_type[query.项目类型]
+        self.总经费 = None if not hasattr(query, '总经费') else query.总经费
+        self.起始年份 = None if not hasattr(query, '起始年份') else query.起始年份
+        self.结束年份 = None if not hasattr(query, '结束年份') else query.结束年份
+        self.课程号 = None if not hasattr(query, '课程号') else query.课程号
+        self.课程名称 = None if not hasattr(query, '课程名称') else query.课程名称
+        self.学时数 = None if not hasattr(query, '学时数') else query.学时数
+        self.课程性质 = None if not hasattr(query, '课程性质') else course_type[query.课程性质]
+        self.排名 = None if not hasattr(query, '排名') else query.排名
+        self.是否通讯作者 = None if not hasattr(query, '是否通讯作者') else query.是否通讯作者
+        self.年份 = None if not hasattr(query, '年份') else query.年份
+        self.学期 = None if not hasattr(query, '学期') else semester[query.学期]
+        self.承担学时 = None if not hasattr(query, '承担学时') else query.承担学时
+        self.承担经费 = None if not hasattr(query, '承担经费') else query.承担经费
+
+def display(query_set):
+    result = []
+    for query in query_set:
+        result.append(Display(query))
+    return result
 
 # # 账户
 # class Account(db.Model):

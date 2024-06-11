@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<base href="./">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>教师教学科研登记系统</title>
+<link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet">
+<!-- <script>
+function outputpath() {
+    const container = document.getElementById('query');
+    const input1 = document.createElement('h5');
+    const input2 = document.createElement('h5');
+    input1.innerHTML = "输出格式：markdown";
+    input2.innerHTML = "输出路径：{{path}}";
+    container.appendChild(input1);
+    container.appendChild(input2);
+  }
+</script> -->
+</head>
+
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+
+<header class="app-header navbar"><span class="badge badge-light">数据库系统及应用Lab</span> </header>
+<div class="app-body">
+  <div class="sidebar">
+    <nav class="sidebar-nav">
+      <ul class="nav">
+        <li class="nav-title">教师教学科研登记系统</li>
+        <!-- <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a> -->
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="teacher"> <i class="nav-icon icon-puzzle"></i> 教师</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="paper"> <i class="nav-icon icon-cursor"></i> 论文</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="course"> <i class="nav-icon icon-cursor"></i> 课程</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="project"> <i class="nav-icon icon-star"></i> 项目</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="statistic"> <i class="nav-icon icon-star"></i> 统计</a> </li>
+      </ul>
+    </nav>
+    <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+  </div>
+  <main class="main">
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="insert-container" id="query">
+                <h4 class="card-title mb-0">查询</h4>
+                <form class="form-insert" method="POST">
+                  <input type="hidden" name="type" value="query">
+                  <input type="text" placeholder="工号" name="工号" required="">
+                  <input type="text" placeholder="起始年份" name="起始年份">
+                  <input type="text" placeholder="结束年份" name="结束年份">
+                  <button class="btn btn-info" type="submit">查询</button>
+                </form>
+                <h5 class="text-muted">输出格式：markdown</h5>
+                <h5 class="text-muted">输出路径：{{path}}</h5>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-5">
+                <h4 class="card-title mb-0">基本信息</h4>
+              </div>
+            </div>
+            <div>             
+              <div>
+                <table id="bank-table">
+                  <tr> {% for i in labels[0] %}
+                    <th> {{ i }} </th>
+                    {% endfor %}
+                  </tr>
+                  {% for i in content[0] %}
+                  <tr id="{{ i.工号 }}">
+                    <td> {{ i.工号 }} </td>
+                    <td> {{ i.姓名 }} </td>
+                    <td> {{ i.职称 }} </td>
+                    <td> {{ i.性别 }} </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-5">
+                <h4 class="card-title mb-0">教学情况</h4>
+              </div>
+            </div>
+            <div>             
+              <div>
+                <table id="bank-table">
+                  <tr> {% for i in labels[1] %}
+                    <th> {{ i }} </th>
+                    {% endfor %}
+                  </tr>
+                  {% for i in content[1] %}
+                  <tr id="{{ i.课程号 }}">
+                    <td> {{ i.课程号 }} </td>
+                    <td> {{ i.课程名称 }} </td>
+                    <td> {{ i.学时数 }} </td>
+                    <td> {{ i.课程性质 }} </td>
+                    <td> {{ i.年份 }} </td>
+                    <td> {{ i.学期 }} </td>
+                    <td> {{ i.承担学时 }} </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-5">
+                <h4 class="card-title mb-0">发表论文情况</h4>
+              </div>
+            </div>
+            <div>             
+              <div>
+                <table id="bank-table">
+                  <tr> {% for i in labels[2] %}
+                    <th> {{ i }} </th>
+                    {% endfor %}
+                  </tr>
+                  {% for i in content[2] %}
+                  <tr id="{{ i.序号 }}">
+                    <td> {{ i.序号 }} </td>
+                    <td> {{ i.论文名称 }} </td>
+                    <td> {{ i.发表期刊 }} </td>
+                    <td> {{ i.发表年份 }} </td>
+                    <td> {{ i.论文类型 }} </td>
+                    <td> {{ i.级别 }} </td>
+                    <td> {{ i.排名 }} </td>
+                    <td> {{ i.是否通讯作者 }} </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-5">
+                <h4 class="card-title mb-0">项目承担情况</h4>
+              </div>
+            </div>
+            <div>             
+              <div>
+                <table id="bank-table">
+                  <tr> {% for i in labels[3] %}
+                    <th> {{ i }} </th>
+                    {% endfor %}
+                  </tr>
+                  {% for i in content[3] %}
+                  <tr id="{{ i.项目号 }}">
+                    <td> {{ i.项目号 }} </td>
+                    <td> {{ i.项目名称 }} </td>
+                    <td> {{ i.项目来源 }} </td>
+                    <td> {{ i.项目类型 }} </td>
+                    <td> {{ i.总经费 }} </td>
+                    <td> {{ i.起始年份 }} </td>
+                    <td> {{ i.结束年份 }} </td>
+                    <td> {{ i.排名 }} </td>
+                    <td> {{ i.承担经费 }} </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+  <aside class="aside-menu">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#timeline" role="tab"> <i class="icon-list"></i> </a> </li>
+      <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#messages" role="tab"> <i class="icon-speech"></i> </a> </li>
+      <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab"> <i class="icon-settings"></i> </a> </li>
+    </ul>    
+  </aside>
+</div>
+</body>
+</html>

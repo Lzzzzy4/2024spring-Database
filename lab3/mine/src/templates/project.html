@@ -5,8 +5,8 @@
     项目来源 VARCHAR(256) NOT NULL,
     项目类型 INT CHECK (项目类型 IN (1, 2, 3, 4, 5)),
     总经费 FLOAT NOT NULL,
-    起始月份 DATE NOT NULL,
-    结束月份 DATE
+    起始年份 DATE NOT NULL,
+    结束年份 DATE
 ); -->
 <html lang="en">
 <head>
@@ -95,10 +95,10 @@
     </datalist>
     <label for="email"><b>总经费</b></label>
     <input type="text" placeholder="总经费" name="总经费">
-    <label for="email"><b>起始月份</b></label>
-    <input type="text" placeholder="起始月份" name="起始月份">
-    <label for="email"><b>结束月份</b></label>
-    <input type="text" placeholder="结束月份" name="结束月份">
+    <label for="email"><b>起始年份</b></label>
+    <input type="text" placeholder="起始年份" name="起始年份">
+    <label for="email"><b>结束年份</b></label>
+    <input type="text" placeholder="结束年份" name="结束年份">
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm('updateForm')">取消</button>
   </form>
@@ -151,11 +151,11 @@
     <nav class="sidebar-nav">
       <ul class="nav">
         <li class="nav-title">教师教学科研登记系统</li>
-        <!-- <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a> -->
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="teacher"> <i class="nav-icon icon-puzzle"></i> 教师</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="paper"> <i class="nav-icon icon-cursor"></i> 论文</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="course"> <i class="nav-icon icon-cursor"></i> 课程</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="project"> <i class="nav-icon icon-star"></i> 项目</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="statistic"> <i class="nav-icon icon-star"></i> 统计</a> </li>
       </ul>
     </nav>
     <button class="sidebar-minimizer brand-minimizer" type="button"></button>
@@ -180,8 +180,8 @@
                     <option value="5">其它类型项目</option>
                   </datalist>
                   <input type="text" placeholder="总经费" name="总经费">
-                  <input type="text" placeholder="起始月份" name="起始月份">
-                  <input type="text" placeholder="结束月份" name="结束月份">
+                  <input type="text" placeholder="起始年份" name="起始年份">
+                  <input type="text" placeholder="结束年份" name="结束年份">
                   <button class="btn btn-info" type="submit">查询</button>
                 </form>
           </div>
@@ -209,8 +209,8 @@
                     <td> {{ i.项目来源 }} </td>
                     <td> {{ i.项目类型 }} </td>
                     <td> {{ i.总经费 }} </td>
-                    <td> {{ i.起始月份 }} </td>
-                    <td> {{ i.结束月份 }} </td>
+                    <td> {{ i.起始年份 }} </td>
+                    <td> {{ i.结束年份 }} </td>
                     <td><label class="btn btn-success" onclick="openForm(this.parentNode.parentNode.id)">更新</label>
                       <label class="btn bg-danger" onclick="openwForm(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
@@ -238,8 +238,8 @@
                 <option value="5">其它类型项目</option>
               </datalist>
               <input type="text" placeholder="总经费" name="总经费" required="">
-              <input type="text" placeholder="起始月份" name="起始月份" required="">
-              <input type="text" placeholder="结束月份(可缺省)" name="结束月份">
+              <input type="text" placeholder="起始年份" name="起始年份" required="">
+              <input type="text" placeholder="结束年份(可缺省)" name="结束年份">
               <button class="btn btn-warning" type="submit">新建</button>
             </form>
           </div>

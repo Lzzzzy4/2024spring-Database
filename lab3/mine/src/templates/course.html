@@ -160,6 +160,7 @@
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="paper"> <i class="nav-icon icon-cursor"></i> 论文</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="course"> <i class="nav-icon icon-cursor"></i> 课程</a> </li>
         <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="project"> <i class="nav-icon icon-star"></i> 项目</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="statistic"> <i class="nav-icon icon-star"></i> 统计</a> </li>
       </ul>
     </nav>
     <button class="sidebar-minimizer brand-minimizer" type="button"></button>
@@ -268,7 +269,7 @@
                     <td> {{ i.课程号 }} </td>
                     <td> {{ i.课程名称 }} </td>
                     <td> {{ i.年份 }} </td>
-                    <td> {{ '春季学期' if i.学期==1 else '夏季学期' if i.学期==2 else '秋季学期' if i.学期==3 else '' }} </td>
+                    <td> {{ i.学期 }} </td>
                     <td> {{ i.承担学时 }} </td>
                     <td><label class="btn btn-success" onclick="openForm_1(this.parentNode.parentNode.id)">更新</label>
                       <label class="btn bg-danger" onclick="openwForm_1(this.parentNode.parentNode.id)">删除</label></td>

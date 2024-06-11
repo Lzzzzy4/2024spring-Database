@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<base href="./">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>教师教学科研登记系统</title>
+<link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet">
+
+</head>
+
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+
+<header class="app-header navbar"><span class="badge badge-light">数据库系统及应用Lab</span> </header>
+<div class="app-body">
+  <div class="sidebar">
+    <nav class="sidebar-nav">
+      <ul class="nav">
+        <li class="nav-title">教师教学科研登记系统</li>
+        <!-- <a class="nav-link" href="index"> <i class="nav-icon icon-speedometer"></i> 首页 </a> -->
+        <!-- <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="teacher"> <i class="nav-icon icon-puzzle"></i> 教师</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="paper"> <i class="nav-icon icon-cursor"></i> 论文</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="course"> <i class="nav-icon icon-cursor"></i> 课程</a> </li>
+        <li class="nav-item nav-dropdown"> <a class="nav-link nav-dropdown-toggle" href="project"> <i class="nav-icon icon-star"></i> 项目</a> </li> -->
+      </ul>
+    </nav>
+    <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+  </div>
+  <main class="main">
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="insert-container">
+                <h4 class="card-title mb-0">报错</h4>
+                <h5 class="text-muted">{{ message1 }}</h5>
+                <h5 class="text-muted">{{ message2 }}</h5>
+                <h5 class="text-muted">{{ message3 }}</h5>
+                <form class="form-insert" method="POST">
+                  <input type="hidden" name="type" value="return">
+                  <button class="btn btn-info" type="submit">返回</button>
+                </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <aside class="aside-menu">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#timeline" role="tab"> <i class="icon-list"></i> </a> </li>
+      <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#messages" role="tab"> <i class="icon-speech"></i> </a> </li>
+      <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab"> <i class="icon-settings"></i> </a> </li>
+    </ul>    
+  </aside>
+</div>
+</body>
+</html>
