@@ -86,18 +86,19 @@ CREATE TABLE TakingProjects (
 INSERT INTO Teachers VALUES ('00001', '张三', 1, 1);
 INSERT INTO Teachers VALUES ('00002', '李四', 1, 2);
 INSERT INTO Teachers VALUES ('00003', '王五', 1, 3);
+INSERT INTO Teachers VALUES ('00004', '赵六', 2, 4);
 
-INSERT INTO Papers VALUES (1, '论文1', '期刊1', 2020, 1, 1);
-INSERT INTO Papers VALUES (2, '论文2', '期刊2', 2020, 2, 2);
-INSERT INTO Papers VALUES (3, '论文3', '期刊3', 2020, 3, 3);
+INSERT INTO Papers VALUES (1, '基于Transformer的Diffusion Model', 'ICLR', 2019, 1, 1);
+INSERT INTO Papers VALUES (2, '层剪枝Transformer', 'AAAI', 2020, 2, 2);
+INSERT INTO Papers VALUES (3, 'Video Diffuison Model', 'NIPS', 2021, 3, 3);
 
-INSERT INTO Projects VALUES ('A0001', '项目1', '来源1', 1, 100, 2020, 2020);
-INSERT INTO Projects VALUES ('A0002', '项目2', '来源2', 2, 200, 2020, 2020);
-INSERT INTO Projects VALUES ('A0003', '项目3', '来源3', 3, 300, 2020, 2020);
+INSERT INTO Projects VALUES ('A0001', 'Mate60研发', '华为', 1, 100, 2018, 2020);
+INSERT INTO Projects VALUES ('A0002', '小米Sui7研发', '小米', 2, 200, 2021, 2023);
+INSERT INTO Projects VALUES ('A0003', '中科大高新区建设', '省厅', 3, 300, 2020, 2024);
 
-INSERT INTO Courses VALUES ('B0001', '课程1', 1, 1);
-INSERT INTO Courses VALUES ('B0002', '课程2', 2, 2);
-INSERT INTO Courses VALUES ('B0003', '课程3', 3, 1);
+INSERT INTO Courses VALUES ('B0001', '计算机网络', 1, 1);
+INSERT INTO Courses VALUES ('B0002', '数据库', 2, 2);
+INSERT INTO Courses VALUES ('B0003', '操作系统', 3, 1);
 
 INSERT INTO PublishingPapers VALUES ('00001', 1, 1, TRUE);
 INSERT INTO PublishingPapers VALUES ('00002', 2, 2, FALSE);

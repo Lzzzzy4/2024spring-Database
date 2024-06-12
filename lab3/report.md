@@ -429,6 +429,12 @@ def output(content, path, year):
 
 ### 4.1 实现结果
 
+#### 登录界面
+
+
+
+注明：网页端的css文件， 地址如下：https://github.com/hehaha68/USTC_2021Spring_An-Introduction-to-Database-System/tree/master/%E5%AE%9E%E9%AA%8C/lab3/src/static
+
 ### 4.2 测试结果
 
 #### 4.3 实现中的难点问题及解决
