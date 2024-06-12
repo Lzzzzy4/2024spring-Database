@@ -1,9 +1,9 @@
 -- Active: 1712909736541@@127.0.0.1@3306@teacher
 /* user */
-/* CREATE TABLE user (
+CREATE TABLE user (
     name VARCHAR(256) PRIMARY KEY,
     password VARCHAR(256) NOT NULL
-); */
+);
 drop table PublishingPapers;
 drop table LeadingCourses;
 drop table TakingProjects;

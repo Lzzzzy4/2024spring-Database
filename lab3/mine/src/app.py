@@ -22,8 +22,6 @@ db_connect = mysql.connector.connect(
 db = SQLAlchemy()
 db.init_app(app)
 
-# cursor = db2.cursor()
-
 def exist(type, id):
     if type == 'teacher':
         return db.session.query(Teachers).filter_by(工号=id).scalar() is not None
@@ -52,17 +50,15 @@ def hello_world():
 def login():
     global lasttemplate
     lasttemplate = 'login'
-    if request.method == 'GET':
-        return render_template('login.html')
-    else:
+    if request.method == 'POST':
         if request.form.get('type') == 'signup':
             name = request.form.get('name')
             password = request.form.get('password')
-            newUser = User(
+            new = User(
                 name=name,
                 password=password,
             )
-            db.session.add(newUser)
+            db.session.add(new)
             db.session.commit()
             return render_template('login.html')
         elif request.form.get('type') == 'login':
@@ -91,9 +87,9 @@ def teacher():
     if request.method == 'POST':
         if request.form.get('type') == 'query':
             for i in range(len(labels)):
-                req_id = request.form.get(labels[i])
-                if req_id != "":
-                    result_query = result_query.filter(Teachers.__table__.columns[labels[i]] == req_id)
+                idx = request.form.get(labels[i])
+                if idx != "":
+                    result_query = result_query.filter(Teachers.__table__.columns[labels[i]] == idx)
         elif request.form.get('type') == 'delete':
             idx = request.form.get('key')
             teacher_result = db.session.query(Teachers).filter_by(工号=idx).first()
@@ -133,9 +129,9 @@ def paper():
         if request.form.get('type') == 'query':
             idx = []
             for i in range(len(labels)):
-                req_id = request.form.get(labels[i])
-                if req_id != "":
-                    result_query = result_query.filter(Papers.__table__.columns[labels[i]] == req_id)
+                idx = request.form.get(labels[i])
+                if idx != "":
+                    result_query = result_query.filter(Papers.__table__.columns[labels[i]] == idx)
         elif request.form.get('type') == 'delete':
             idx = request.form.get('key')
             paper_result = db.session.query(Papers).filter_by(序号=idx).first()
@@ -230,9 +226,9 @@ def course():
         if request.form.get('type') == 'query':
             idx = []
             for i in range(len(labels)):
-                req_id = request.form.get(labels[i])
-                if req_id != "":
-                    result_query = result_query.filter(Courses.__table__.columns[labels[i]] == req_id)
+                idx = request.form.get(labels[i])
+                if idx != "":
+                    result_query = result_query.filter(Courses.__table__.columns[labels[i]] == idx)
         elif request.form.get('type') == 'delete':
             idx = request.form.get('key')
             course_result = db.session.query(Courses).filter_by(课程号=idx).first()
@@ -323,9 +319,9 @@ def project():
         if request.form.get('type') == 'query':
             idx = []
             for i in range(len(labels)):
-                req_id = request.form.get(labels[i])
-                if req_id != "":
-                    result_query = result_query.filter(Projects.__table__.columns[labels[i]] == req_id)
+                idx = request.form.get(labels[i])
+                if idx != "":
+                    result_query = result_query.filter(Projects.__table__.columns[labels[i]] == idx)
         elif request.form.get('type') == 'delete':
             idx = request.form.get('key')
             project_result = db.session.query(Projects).filter_by(项目号=idx).first()
@@ -411,32 +407,32 @@ def output(content, path, year):
         if year[1] == 9999: year1= ''
         f.write(f'# 教师科学研究统计工作 （{year0}-{year1}）\n')
         f.write('\n')
+
         f.write('## 教师基本信息\n')
         f.write('\n')
         f.write(f'#### 工号:{content[0][0].工号}\t\t姓名:{content[0][0].姓名}\t\t职称:{content[0][0].职称}\t\t性别:{content[0][0].性别}\n')
         f.write('\n')
+
         f.write('## 教学情况\n')
         f.write('\n')
-        #表格
         f.write('| 课程号 | 课程名称 | 学时数 | 课程性质 | 年份 | 学期 | 承担学时 |\n')
         f.write('| --- | --- | --- | --- | --- | --- | --- |\n')
         for i in range(len(content[1])):
             f.write(f'| {content[1][i].课程号} | {content[1][i].课程名称} | {content[1][i].学时数} | {content[1][i].课程性质} | {content[1][i].年份} | {content[1][i].学期} | {content[1][i].承担学时} |\n')
-        # for i in range(len(content[1])):
-        #     f.write(f'课程号:{content[1][i].课程号}\t\t课程名称:{content[1][i].课程名称}\t\t学时数:{content[1][i].学时数}\t\t课程性质:{content[1][i].课程性质}\t\t年份:{content[1][i].年份}\t\t学期:{content[1][i].学期}\t\t承担学时:{content[1][i].承担学时}\n')
         f.write('\n')
+
         f.write('## 发表论文情况\n')
         f.write('\n')
         for i in range(len(content[2])):
-            content[2][i].是否通讯作者 = ', 通讯作者' if content[2][i].是否通讯作者 else ''
-            f.write(f'{i+1}. {content[2][i].论文名称}, {content[2][i].发表期刊}, {content[2][i].发表年份}, {content[2][i].论文类型}, {content[2][i].级别}, 排名第{content[2][i].排名}{content[2][i].是否通讯作者}\n')
+            temp = ', 通讯作者' if content[2][i].是否通讯作者 else ''
+            f.write(f'{i+1}. {content[2][i].论文名称}, {content[2][i].发表期刊}, {content[2][i].发表年份}, {content[2][i].论文类型}, {content[2][i].级别}, 排名第{content[2][i].排名}{temp}\n')
         f.write('\n')
+
         f.write('## 承担项目情况\n')
         f.write('\n')
         for i in range(len(content[3])):
             f.write(f'{i+1}. {content[3][i].项目名称}, {content[3][i].项目来源}, {content[3][i].项目类型}, 总经费:{content[3][i].总经费}, {content[3][i].起始年份}-{content[3][i].结束年份}, 排名第{content[3][i].排名}, 承担经费:{content[3][i].承担经费}\n')
     print(f'output style: markdown\noutput path:{path}')
-    pass
 
 @app.route('/statistic', methods=['GET', 'POST'])
 def statistic():
@@ -480,31 +476,5 @@ def error():
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
-
-
-
-# @app.route('/404', methods=['GET', 'POST'])
-# def not_found():
-#     return render_template('404.html', error_title='错误标题', error_message='错误信息')
-
-
-# @app.errorhandler(Exception)
-# def err_handle(e):
-#     error_message = 'ttt'
-#     error_title = 'ttt'
-#     if (type(e) == IndexError):
-#         error_title = '填写错误'
-#         error_message = '日期格式错误! (yyyy-mm-dd)'
-#     elif (type(e) == AssertionError):
-#         error_title = '删除错误'
-#         error_message = '删除条目仍有依赖！'
-#     # elif (type(e) == SQLAlchemy.exc.IntegrityError):
-#     #     error_title = '更新/插入错误'
-#     #     error_message = str(e._message())
-#     else:
-#         error_title = '更新/插入错误'
-#         error_message = str(e)
-
-#     return render_template('404.html', error_title=error_title, error_message=error_message)
 
 
