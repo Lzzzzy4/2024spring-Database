@@ -272,11 +272,11 @@ def paper():
     result_query = db.session.query(Papers)
     labels1 = ['工号', '姓名', '序号', '论文名称', '排名', '是否通讯作者']
     result_query1 = db.session.query(None)
-    labels2 = ['工号', '论文序号', '排名', '是否通讯作者']
+    labels2 = ['工号', '序号', '排名', '是否通讯作者']
     print(f"\n{request.form.get('type')}\n")
     if request.method == 'POST':
         if request.form.get('type') == 'query':
-            ...
+			...
         elif request.form.get('type') == 'query_1':
             teacher = request.form.get('工号')
             num = request.form.get('序号')
@@ -289,25 +289,39 @@ def paper():
             paper_result = db.session.query(PublishingPapers).filter_by(工号=idx).first()
             db.session.delete(paper_result)
             db.session.commit()
-        elif request.form.get('type') == 'update_1':
-            idx = request.form.get('key')
-            paper_result = db.session.query(PublishingPapers).filter_by(工号=idx).first()
-            for i in range(len(labels2)):
-                update_value = request.form.get(labels2[i])
-                if update_value != "":
-                    if update_value == 'True': update_value = True
-                    if update_value == 'False': update_value = False
-                    paper_result.__setattr__(labels2[i], update_value)
-            db.session.commit()
-        elif request.form.get('type') == 'insert_1':
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '修改':
             paramlen = request.form.get('cnt')
             num = request.form.get('序号')
             if not exist('paper', num):
                 return render_template('error.html', message1='缺少条目', message2='论文不存在', message3='请先添加论文')
-            if not exist('publishingpaper', num):
-                return render_template('error.html', message1='重复条目', message2='论文的作者已经添加', message3='请勿重复添加或者删除后重试')
-            contact_flag = False
+            for i in range(int(paramlen)):
+                contact = request.form.get('是否通讯作者'+str(i+1))
+                if contact == 'True': contact = True
+                if contact == 'False': contact = False
+                rank = request.form.get('排名'+str(i+1))
+                idx = request.form.get('工号'+str(i+1))
+                publish_result = db.session.query(PublishingPapers).filter_by(序号=num, 工号=idx).first()
+                publish_result.__setattr__('排名', rank)
+                publish_result.__setattr__('是否通讯作者', contact)
+            # check
+            publish_result = db.session.query(PublishingPapers).filter_by(序号=num)
+            contact_cnt = 0
             rank_set = {}
+            for i in publish_result.all():
+                if i.是否通讯作者: contact_cnt += 1
+                if contact_cnt > 1:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='一篇论文只能有一位通讯作者', message3=f'{i.工号}为重复通讯作者')
+                if i.排名 in rank_set:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='论文的作者排名不能有重复', message3=f'{i.工号}的排名重复')
+                rank_set[i.排名] = True
+            db.session.commit()
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '添加':
+            paramlen = request.form.get('cnt')
+            num = request.form.get('序号')
+            if not exist('paper', num):
+                return render_template('error.html', message1='缺少条目', message2='论文不存在', message3='请先添加论文')
             for i in range(int(paramlen)):
                 contact = request.form.get('是否通讯作者'+str(i+1))
                 if contact == 'True': contact = True
@@ -319,17 +333,22 @@ def paper():
                     排名 = rank,
                     是否通讯作者 = contact
                 )
-                if contact == True:
-                    if contact_flag == False: contact_flag = True
-                    else: return render_template('error.html', message1='数据检查失败', message2='一篇论文只能有一位通讯作者',message3=f'第{i+1}位作者为重复通讯作者')
-                if rank in rank_set:
-                    return render_template('error.html', message1='数据检查失败', message2='论文的作者排名不能有重复', message3=f'第{i+1}位作者的排名重复')
-                rank_set[rank] = True
                 db.session.add(pub)
-            if contact_flag == False:
-                return render_template('error.html', message1='数据检查失败', message2='一篇论文必须有一位通讯作者', message3='请添加通讯作者')
+            # check
+            publish_result = db.session.query(PublishingPapers).filter_by(序号=num)
+            contact_cnt = 0
+            rank_set = {}
+            for i in publish_result.all():
+                if i.是否通讯作者: contact_cnt += 1
+                if contact_cnt > 1:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='一篇论文只能有一位通讯作者', message3=f'{i.工号}为重复通讯作者')
+                if i.排名 in rank_set:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='论文的作者排名不能有重复', message3=f'{i.工号}的排名重复')
+                rank_set[i.排名] = True
             db.session.commit()
-                
+
     result = display(result_query.all())
     result1 = display(result_query1.all())
     return render_template('paper.html', labels=labels, content=result, labels1=labels1, content1=result1)
@@ -339,8 +358,8 @@ def paper():
 
 - 查询：我们实现了对于一个工号查询所有的发表论文，以及对于一个论文序号查询所有的作者。
 - 删除：删除的逻辑与上文相同。
-- 更新：逻辑基本与上文相同。需要注意的是如Char、Integer等类型，SQL都接受字符串输入，可以直接获取网页的输入值并且传递。对于布尔变量则需要在python中申请布尔变量再传入对应接口，所以需要对网页传递的字符串形式的'True'转变为布尔变量。
-- 插入：大部分的错误检测都是在关系的插入部分。我们在网页端实现了动态个数的输入框，也即一次性插入论文的所有作者。以此我们可以检查是否有作者排名重复，是否有且仅有一个通讯作者。
+- 更新：为了维护约束，我们实现了批量更新，并且在网页端实现了动态个数的输入框。我们在更改后再进行约束检测，若不正确则回滚。
+- 插入：与更新类似，我们实现了批量插入。在插入完成后进行错误检测。
 
 剩余课程与项目的部分与论文部分的实现大同小异，在此不展开。
 
@@ -429,14 +448,210 @@ def output(content, path, year):
 
 ### 4.1 实现结果
 
+注明：网页端的css文件， 地址如下：https://github.com/hehaha68/USTC_2021Spring_An-Introduction-to-Database-System/tree/master/%E5%AE%9E%E9%AA%8C/lab3/src/static
+
 #### 登录界面
 
+![image-20240613162755062](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613162755062.png)
 
+#### 首页
 
-注明：网页端的css文件， 地址如下：https://github.com/hehaha68/USTC_2021Spring_An-Introduction-to-Database-System/tree/master/%E5%AE%9E%E9%AA%8C/lab3/src/static
+![image-20240613162814656](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613162814656.png)
+
+#### 教师
+
+![image-20240613162850933](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613162850933.png)
+
+#### 论文
+
+![image-20240613163010334](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163010334.png)
+
+#### 教师-论文
+
+![image-20240613193026710](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193026710.png)
+
+#### 课程
+
+![image-20240613162835067](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613162835067.png)
+
+#### 教师-课程
+
+![image-20240613193122629](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193122629.png)
+
+#### 项目
+
+![image-20240613163055852](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163055852.png)
+
+#### 教师-项目
+
+![image-20240613193138622](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193138622.png)
+
+#### 统计
+
+![image-20240613163137800](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163137800.png)
 
 ### 4.2 测试结果
 
-#### 4.3 实现中的难点问题及解决
+#### 登录
+
+输入不存在的用户名：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163411335.png" alt="image-20240613163411335" style="zoom:50%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163458646.png" alt="image-20240613163458646" style="zoom:50%;" />
+
+注册：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163555239.png" alt="image-20240613163555239" style="zoom:50%;" />
+
+密码错误：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163619386.png" alt="image-20240613163619386" style="zoom:50%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163631117.png" alt="image-20240613163631117" style="zoom:50%;" />
+
+正确登录：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163736469.png" alt="image-20240613163736469" style="zoom:50%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163831095.png" alt="image-20240613163831095" style="zoom:33%;" />
+
+#### 教师
+
+![image-20240613163933248](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163933248.png)
+
+查询工号：
+
+![image-20240613163956696](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613163956696.png)
+
+查询职称：
+
+![image-20240613164045797](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613164045797.png)
+
+查询性别：
+
+![image-20240613164026332](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613164026332.png)
+
+多条件查询：
+
+![image-20240613164124899](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613164124899.png)
+
+删除：
+
+![image-20240613164158542](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613164158542.png)
+
+![image-20240613164658696](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613164658696.png)
+
+由于其他表中存在外键依赖无法删除。清空其他表后删除：
+
+![image-20240613165006968](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613165006968.png)
+
+插入重复主键：
+
+![image-20240613165046523](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613165046523.png)
+
+![image-20240613165510400](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613165510400.png)
+
+正确插入：
+
+![image-20240613165626886](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613165626886.png)
+
+![image-20240613165635517](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613165635517.png)
+
+对李四进行更新：
+
+![image-20240613171358359](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613171358359.png)
+
+其中缺省值不变。若主键冲突则正常报错。
+
+![image-20240613171414127](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613171414127.png)
+
+对于论文、课程、项目三表基本类似，不再演示。
+
+#### 论文-教师
+
+以论文号查询：
+
+![image-20240613193255916](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193255916.png)
+
+以老师工号查询：
+
+![image-20240613193310018](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193310018.png)
+
+删除：
+
+![image-20240613193325858](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193325858.png)
+
+正确删除了张三对于论文1的发表。
+
+![image-20240613193349026](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193349026.png)
+
+插入：
+
+点击两次“增加作者”，网页端增加两个输入框
+
+![image-20240613193414847](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613193414847.png)
+
+排名重复：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194646117.png" alt="image-20240613194646117" style="zoom:40%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194433359.png" alt="image-20240613194433359" style="zoom:50%;" />
+
+通讯作者重复：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194707511.png" alt="image-20240613194707511" style="zoom:40%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194722789.png" alt="image-20240613194722789" style="zoom:50%;" />
+
+正确插入：
+
+![image-20240613194824068](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194824068.png)
+
+![image-20240613194837633](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194837633.png)
+
+再插入违法数据，正常报错：
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194915663.png" alt="image-20240613194915663" style="zoom:40%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613194926629.png" alt="image-20240613194926629" style="zoom:50%;" />
+
+对赵六论文3的排名进行更改：
+
+![image-20240613195009146](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195009146.png)
+
+正确更新了排名。
+
+![image-20240613195025365](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195025365.png)
+
+#### 教师-课程
+
+教师-课程功与前相似，其他功能不再展示，仅展示在此演示文档中要求的约束合法性的判断。
+
+操作系统课程4学分，目前为一名老师担任全部。
+
+![image-20240613195219235](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195219235.png)
+
+我们插入一位教师再承担一学时，程序报错。
+
+<img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195353881.png" alt="image-20240613195353881" style="zoom:50%;" /><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195812883.png" alt="image-20240613195812883" style="zoom:50%;" />
+
+我们先让他承担0学时。
+
+![image-20240613195911765](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195911765.png)
+
+再进行修改：
+
+![image-20240613195957174](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613195957174.png)
+
+![image-20240613200016521](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20240613200016521.png)
+
+#### 教师-项目
+
+排名在论文中已经展示对应功能，经费与承担学时的逻辑一致，在此也略过。
+
+### 4.3 实现中的难点问题及解决
+
+- html和python的接口对应问题：通过控制变量调试以及打印变量相关信息解决。
+- python与数据库接口对应问题：查询函数文档，上网寻找相关例子学习。
+- 若干类型错误：html上get的类型一致为string，需要进行类型转换。
+- 数据库的连接与相关参数配置：参考网络解决方法。
+- 测试不方便，无法批量测试：无解，手动慢慢测试。
 
 ## 5 总结与讨论
+
+我在大一时曾参与过使用flask架构的前后端程序实现，在本项目中我也选择以此为架构进行实现。整个项目的工程量很大，我从中学习到许多经验与技能：
+
+- 模块化实现与模块化调试，避免bug的耦合与堆积。
+- 善用网络与文档，很多接口的用法不需要摸索，有标准示例。
+- 进一步学习了flask框架开发与前后端协同。
+- 强化了系统性思考，对于用户输入错误的解决方法与编程。
+- 对于数据库应用有了更深的理解与实现能力。

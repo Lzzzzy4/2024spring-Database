@@ -19,12 +19,6 @@
     update_form.key.value = key;
   }
 
-  function openForm_1(key) {
-    var form = document.getElementById("updateForm_1");
-    form.style.display = "block";
-    update_form_1.key.value = key;
-  }
-
   function openwForm(key) {
     var form = document.getElementById("deleteWarning")
     form.style.display = "block";
@@ -111,27 +105,6 @@
     </datalist>
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm('updateForm')">取消</button>
-  </form>
-</div>
-
-<div class="form-popup" id="updateForm_1">
-  <form class="form-container" name="update_form_1" method="POST">
-    <h1>更新</h1>
-    <div class="small text-muted">缺省值不变</div>
-    <input type="hidden" name="key" value="">
-    <input type="hidden" name="type" value="update_1">
-    <input type="text" placeholder="工号" name="工号">
-    <input type="text" placeholder="课程号" name="课程号">
-    <input type="text" placeholder="年份" name="年份">
-    <input type="text" placeholder="学期" name="学期" list="semeter_list">
-    <datalist id="semeter_list">
-      <option value="1">春季学期</option>
-      <option value="2">夏季学期</option>
-      <option value="3">秋季学期</option>
-    </datalist>
-    <input type="text" placeholder="承担学时" name="承担学时">
-    <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
-    <button type="button" class="btn bg-danger" onclick="closeForm('updateForm_1')">取消</button>
   </form>
 </div>
 
@@ -265,8 +238,7 @@
                     <td> {{ i.年份 }} </td>
                     <td> {{ i.学期 }} </td>
                     <td> {{ i.承担学时 }} </td>
-                    <td><label class="btn btn-success" onclick="openForm_1(this.parentNode.parentNode.id)">更新</label>
-                      <label class="btn bg-danger" onclick="openwForm_1(this.parentNode.parentNode.id)">删除</label></td>
+                    <td><label class="btn bg-danger" onclick="openwForm_1(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
                   {% endfor %}
                 </table>
@@ -277,12 +249,17 @@
 
         <div class="card">
           <div class="insert-container">
-            <h4 class="card-title mb-0">添加教师</h4>
+            <h4 class="card-title mb-0">批量添加/修改教师</h4>
             <form class="form-insert" method="POST" id="insert_1">
               <input type="hidden" name="type" value="insert_1">
               <input type="hidden" name="cnt" id="cnt">
               <input type="text" placeholder="课程号" name="课程号" required="">
-              <button class="btn btn-warning" type="submit">新建</button>
+              <input type="text" placeholder="添加/修改" name="choose" required="" list="type_list1">
+              <datalist id="type_list1">
+                <option value="添加">添加</option>
+                <option value="修改">修改</option>
+              </datalist>
+              <button class="btn btn-warning" type="submit">提交</button>
               <button class="btn btn-info" onclick="addInput()" type="button">增加教师</button>
             </form>
           </div>

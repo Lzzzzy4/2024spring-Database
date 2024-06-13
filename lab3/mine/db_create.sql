@@ -1,9 +1,9 @@
 -- Active: 1712909736541@@127.0.0.1@3306@teacher
 /* user */
-CREATE TABLE user (
+/* CREATE TABLE user (
     name VARCHAR(256) PRIMARY KEY,
     password VARCHAR(256) NOT NULL
-);
+); */
 drop table PublishingPapers;
 drop table LeadingCourses;
 drop table TakingProjects;
@@ -88,26 +88,30 @@ INSERT INTO Teachers VALUES ('00002', '李四', 1, 2);
 INSERT INTO Teachers VALUES ('00003', '王五', 1, 3);
 INSERT INTO Teachers VALUES ('00004', '赵六', 2, 4);
 
+INSERT INTO Teachers VALUES ('00005', '小A', 1, 4);
+
 INSERT INTO Papers VALUES (1, '基于Transformer的Diffusion Model', 'ICLR', 2019, 1, 1);
 INSERT INTO Papers VALUES (2, '层剪枝Transformer', 'AAAI', 2020, 2, 2);
 INSERT INTO Papers VALUES (3, 'Video Diffuison Model', 'NIPS', 2021, 3, 3);
 
-INSERT INTO Projects VALUES ('A0001', 'Mate60研发', '华为', 1, 100, 2018, 2020);
-INSERT INTO Projects VALUES ('A0002', '小米Sui7研发', '小米', 2, 200, 2021, 2023);
-INSERT INTO Projects VALUES ('A0003', '中科大高新区建设', '省厅', 3, 300, 2020, 2024);
+INSERT INTO Projects VALUES ('A0001', 'Mate60研发', '华为', 1, 100000, 2018, 2020);
+INSERT INTO Projects VALUES ('A0002', '小米Sui7研发', '小米', 2, 200000, 2021, 2023);
+INSERT INTO Projects VALUES ('A0003', '中科大高新区建设', '中科大', 3, 300000, 2020, 2024);
 
-INSERT INTO Courses VALUES ('B0001', '计算机网络', 1, 1);
-INSERT INTO Courses VALUES ('B0002', '数据库', 2, 2);
-INSERT INTO Courses VALUES ('B0003', '操作系统', 3, 1);
+INSERT INTO Courses VALUES ('B0001', '计算机网络', 3, 1);
+INSERT INTO Courses VALUES ('B0002', '数据库', 4, 1);
+INSERT INTO Courses VALUES ('B0003', '操作系统', 4, 1);
 
 INSERT INTO PublishingPapers VALUES ('00001', 1, 1, TRUE);
-INSERT INTO PublishingPapers VALUES ('00002', 2, 2, FALSE);
-INSERT INTO PublishingPapers VALUES ('00003', 3, 3, TRUE);
+INSERT INTO PublishingPapers VALUES ('00002', 1, 2, FALSE);
+INSERT INTO PublishingPapers VALUES ('00003', 2, 1, TRUE);
+INSERT INTO PublishingPapers VALUES ('00001', 2, 2, FALSE);
 
-INSERT INTO LeadingCourses VALUES ('00001', 'B0001', 2020, 1, 1);
-INSERT INTO LeadingCourses VALUES ('00002', 'B0002', 2020, 2, 2);
-INSERT INTO LeadingCourses VALUES ('00003', 'B0003', 2020, 1, 3);
 
-INSERT INTO TakingProjects VALUES ('00001', 'A0001', 1, 1.0);
-INSERT INTO TakingProjects VALUES ('00002', 'A0002', 2, 2.0);
-INSERT INTO TakingProjects VALUES ('00003', 'A0003', 3, 3.0);
+INSERT INTO LeadingCourses VALUES ('00001', 'B0001', 2023, 1, 3);
+INSERT INTO LeadingCourses VALUES ('00002', 'B0002', 2023, 3, 4);
+INSERT INTO LeadingCourses VALUES ('00003', 'B0003', 2023, 1, 4);
+
+INSERT INTO TakingProjects VALUES ('00001', 'A0001', 1, 50000);
+INSERT INTO TakingProjects VALUES ('00002', 'A0001', 2, 50000);
+INSERT INTO TakingProjects VALUES ('00003', 'A0003', 1, 3000);

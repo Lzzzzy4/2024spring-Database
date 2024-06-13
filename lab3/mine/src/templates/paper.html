@@ -21,12 +21,6 @@
       update_form.key.value = key;
     }
 
-    function openForm_1(key) {
-      var form = document.getElementById("updateForm_1");
-      form.style.display = "block";
-      update_form_1.key.value = key;
-    }
-
     function openwForm(key) {
       var form = document.getElementById("deleteWarning")
       form.style.display = "block";
@@ -116,25 +110,6 @@
     </datalist>
     <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
     <button type="button" class="btn bg-danger" onclick="closeForm('updateForm')">取消</button>
-  </form>
-</div>
-
-<div class="form-popup" id="updateForm_1">
-  <form class="form-container" name="update_form_1" method="POST">
-    <h1>更新</h1>
-    <div class="small text-muted">缺省值不变</div>
-    <input type="hidden" name="key" value="">
-    <input type="hidden" name="type" value="update_1">
-    <input type="text" placeholder="工号" name="工号">
-    <input type="text" placeholder="序号" name="序号">
-    <input type="text" placeholder="排名" name="排名">
-    <input type="text" placeholder="是否通讯作者" name="是否通讯作者" list="is_list">
-    <datalist id="is_list">
-      <option value="True">是</option>
-      <option value="False">否</option>
-    </datalist>
-    <button type="submit" class="btn btn-success" value="Refresh Page" onclick="window.location.reload();">确认</button>
-    <button type="button" class="btn bg-danger" onclick="closeForm('updateForm_1')">取消</button>
   </form>
 </div>
 
@@ -310,8 +285,7 @@
                     <td> {{ i.论文名称 }} </td>
                     <td> {{ i.排名 }} </td>
                     <td> {{ i.是否通讯作者 }} </td>
-                    <td><label class="btn btn-success" onclick="openForm_1(this.parentNode.parentNode.id)">更新</label>
-                      <label class="btn bg-danger" onclick="openwForm_1(this.parentNode.parentNode.id)">删除</label></td>
+                    <td><label class="btn bg-danger" onclick="openwForm_1(this.parentNode.parentNode.id)">删除</label></td>
                   </tr>
                   {% endfor %}
                 </table>
@@ -322,12 +296,17 @@
 
         <div class="card">
           <div class="insert-container">
-            <h4 class="card-title mb-0">添加作者</h4>
+            <h4 class="card-title mb-0">批量添加/修改作者</h4>
             <form class="form-insert" method="POST" id="insert_1">
               <input type="hidden" name="type" value="insert_1">
               <input type="hidden" name="cnt" id="cnt">
               <input type="text" placeholder="论文序号" name="序号" required="">
-              <button class="btn btn-warning" type="submit">新建</button>
+              <input type="text" placeholder="添加/修改" name="choose" required="" list="type_list1">
+              <datalist id="type_list1">
+                <option value="添加">添加</option>
+                <option value="修改">修改</option>
+              </datalist>
+              <button class="btn btn-warning" type="submit">提交</button>
               <button class="btn btn-info" onclick="addInput()" type="button">增加作者</button>
             </form>
           </div>

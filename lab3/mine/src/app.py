@@ -2,7 +2,7 @@ import sys
 sys.path.append("C:\\users\lenovo\\appdata\\local\\programs\\python\\python310\\lib\\site-packages")
 from flask import Flask, render_template, request, abort, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import func
+import sqlalchemy
 from model import User, Teachers, Papers, Projects, Courses, PublishingPapers, LeadingCourses, TakingProjects, display
 import os
 import sys
@@ -44,7 +44,7 @@ lasttemplate = 'login'
 
 @app.route('/')
 def hello_world():
-    return redirect( url_for('login') )
+    return redirect( url_for('teacher') )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -123,7 +123,7 @@ def paper():
     result_query = db.session.query(Papers)
     labels1 = ['工号', '姓名', '序号', '论文名称', '排名', '是否通讯作者']
     result_query1 = db.session.query(None)
-    labels2 = ['工号', '论文序号', '排名', '是否通讯作者']
+    labels2 = ['工号', '序号', '排名', '是否通讯作者']
     print(f"\n{request.form.get('type')}\n")
     if request.method == 'POST':
         if request.form.get('type') == 'query':
@@ -168,25 +168,39 @@ def paper():
             paper_result = db.session.query(PublishingPapers).filter_by(工号=idx).first()
             db.session.delete(paper_result)
             db.session.commit()
-        elif request.form.get('type') == 'update_1':
-            idx = request.form.get('key')
-            paper_result = db.session.query(PublishingPapers).filter_by(工号=idx).first()
-            for i in range(len(labels2)):
-                update_value = request.form.get(labels2[i])
-                if update_value != "":
-                    if update_value == 'True': update_value = True
-                    if update_value == 'False': update_value = False
-                    paper_result.__setattr__(labels2[i], update_value)
-            db.session.commit()
-        elif request.form.get('type') == 'insert_1':
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '修改':
             paramlen = request.form.get('cnt')
             num = request.form.get('序号')
             if not exist('paper', num):
                 return render_template('error.html', message1='缺少条目', message2='论文不存在', message3='请先添加论文')
-            if not exist('publishingpaper', num):
-                return render_template('error.html', message1='重复条目', message2='论文的作者已经添加', message3='请勿重复添加或者删除后重试')
-            contact_flag = False
+            for i in range(int(paramlen)):
+                contact = request.form.get('是否通讯作者'+str(i+1))
+                if contact == 'True': contact = True
+                if contact == 'False': contact = False
+                rank = request.form.get('排名'+str(i+1))
+                idx = request.form.get('工号'+str(i+1))
+                publish_result = db.session.query(PublishingPapers).filter_by(序号=num, 工号=idx).first()
+                publish_result.__setattr__('排名', rank)
+                publish_result.__setattr__('是否通讯作者', contact)
+            # check
+            publish_result = db.session.query(PublishingPapers).filter_by(序号=num)
+            contact_cnt = 0
             rank_set = {}
+            for i in publish_result.all():
+                if i.是否通讯作者: contact_cnt += 1
+                if contact_cnt > 1:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='一篇论文只能有一位通讯作者', message3=f'{i.工号}为重复通讯作者')
+                if i.排名 in rank_set:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='论文的作者排名不能有重复', message3=f'{i.工号}的排名重复')
+                rank_set[i.排名] = True
+            db.session.commit()
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '添加':
+            paramlen = request.form.get('cnt')
+            num = request.form.get('序号')
+            if not exist('paper', num):
+                return render_template('error.html', message1='缺少条目', message2='论文不存在', message3='请先添加论文')
             for i in range(int(paramlen)):
                 contact = request.form.get('是否通讯作者'+str(i+1))
                 if contact == 'True': contact = True
@@ -198,17 +212,22 @@ def paper():
                     排名 = rank,
                     是否通讯作者 = contact
                 )
-                if contact == True:
-                    if contact_flag == False: contact_flag = True
-                    else: return render_template('error.html', message1='数据检查失败', message2='一篇论文只能有一位通讯作者',message3=f'第{i+1}位作者为重复通讯作者')
-                if rank in rank_set:
-                    return render_template('error.html', message1='数据检查失败', message2='论文的作者排名不能有重复', message3=f'第{i+1}位作者的排名重复')
-                rank_set[rank] = True
                 db.session.add(pub)
-            if contact_flag == False:
-                return render_template('error.html', message1='数据检查失败', message2='一篇论文必须有一位通讯作者', message3='请添加通讯作者')
+            # check
+            publish_result = db.session.query(PublishingPapers).filter_by(序号=num)
+            contact_cnt = 0
+            rank_set = {}
+            for i in publish_result.all():
+                if i.是否通讯作者: contact_cnt += 1
+                if contact_cnt > 1:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='一篇论文只能有一位通讯作者', message3=f'{i.工号}为重复通讯作者')
+                if int(i.排名) in rank_set:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='论文的作者排名不能有重复', message3=f'{i.工号}的排名重复')
+                rank_set[int(i.排名)] = True
             db.session.commit()
-                
+
     result = display(result_query.all())
     result1 = display(result_query1.all())
     return render_template('paper.html', labels=labels, content=result, labels1=labels1, content1=result1)
@@ -261,45 +280,73 @@ def course():
         elif request.form.get('type') == 'delete_1':
             idx = request.form.get('key')
             course_result = db.session.query(LeadingCourses).filter_by(工号=idx).first()
+            if course_result.承担学时 != 0:
+                return render_template('error.html', message1='删除错误', message2='删除条目承担学时不为0', message3='请先转移该教师的课程承担学时')
             db.session.delete(course_result)
             db.session.commit()
-        elif request.form.get('type') == 'update_1':
-            idx = request.form.get('key')
-            course_result = db.session.query(LeadingCourses).filter_by(工号=idx).first()
-            for i in range(len(labels2)):
-                update_value = request.form.get(labels2[i])
-                if update_value != "":
-                    course_result.__setattr__(labels2[i], update_value)
-            db.session.commit()
-        elif request.form.get('type') == 'insert_1':
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '修改':
             paramlen = request.form.get('cnt')
             num = request.form.get('课程号')
             if not exist('course', num):
                 return render_template('error.html', message1='缺少条目', message2='课程不存在', message3='请先添加课程')
-            if not exist('leadingcourse', num):
-                return render_template('error.html', message1='重复条目', message2='课程的教师已经添加', message3='请勿重复添加或者删除后重试')
-            record = {}
-            course_result = db.session.query(Courses).filter_by(课程号=num).first()
-            total = course_result.学时数
             for i in range(int(paramlen)):
+                idx = request.form.get('工号'+str(i+1))
+                semester = request.form.get('学期'+str(i+1))
                 year = request.form.get('年份'+str(i+1))
-                term = request.form.get('学期'+str(i+1))
-                credit_hour = request.form.get('承担学时'+str(i+1))
+                hour = request.form.get('承担学时'+str(i+1))
+                leading_result = db.session.query(LeadingCourses).filter_by(课程号=num, 工号=idx).first()
+                leading_result.__setattr__('学期', semester)
+                leading_result.__setattr__('年份', year)
+                leading_result.__setattr__('承担学时', hour)
+            # check
+            leading_result = db.session.query(LeadingCourses).filter_by(课程号=num)
+            total = db.session.query(Courses).filter_by(课程号=num).first().学时数
+            record = {}
+            for i in leading_result.all():
+                if i.学期 not in record:
+                    record[i.学期] = {}
+                if i.年份 not in record[i.学期]:
+                    record[i.学期][i.年份] = 0
+                record[i.学期][i.年份] += i.承担学时
+            for i in record:
+                for j in record[i]:
+                    if abs(record[i][j] - total) > 1e-4:
+                        db.session.rollback()
+                        return render_template('error.html', message1='数据检查失败', message2='课程的学时数与教师的承担学时不匹配', message3=f'学期{i},年份{j}的学时数为{record[i][j]},课程的学时数为{total}')
+            db.session.commit()
+
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '添加':
+            paramlen = request.form.get('cnt')
+            num = request.form.get('课程号')
+            if not exist('course', num):
+                return render_template('error.html', message1='缺少条目', message2='课程不存在', message3='请先添加课程')
+            for i in range(int(paramlen)):
+                semester = request.form.get('学期'+str(i+1))
+                year = request.form.get('年份'+str(i+1))
+                hour = request.form.get('承担学时'+str(i+1))
                 course = LeadingCourses(
                     工号 = request.form.get('工号'+str(i+1)),
                     课程号 = num,
+                    学期 = semester,
                     年份 = year,
-                    学期 = term,
-                    承担学时 = credit_hour
+                    承担学时 = hour
                 )
                 db.session.add(course)
-                if year not in record: record[year] = {}
-                if term not in record[year]: record[year][term] = 0
-                record[year][term] += credit_hour
-            for year in record:
-                for term in record[year]:
-                    if abs(record[year][term] - total) > 1e-4:
-                        return render_template('error.html', message1='数据检查失败', message2='课程的总学时与教师的承担学时不匹配', message3=f'{year}年{term}学期的教师承担学时总额为{record[year][term]},课程总学时为{total}')
+            # check
+            publish_result = db.session.query(LeadingCourses).filter_by(课程号=num)
+            total = db.session.query(Courses).filter_by(课程号=num).first().学时数
+            record = {}
+            for i in publish_result.all():
+                if i.学期 not in record:
+                    record[i.学期] = {}
+                if i.年份 not in record[i.学期]:
+                    record[i.学期][i.年份] = 0
+                record[i.学期][i.年份] += i.承担学时
+            for i in record:
+                for j in record[i]:
+                    if abs(record[i][j] - total) > 1e-4:
+                        db.session.rollback()
+                        return render_template('error.html', message1='数据检查失败', message2='课程的学时数与教师的承担学时不匹配', message3=f'学期{i},年份{j}的学时数为{record[i][j]},课程的学时数为{total}')
             db.session.commit()
 
     result = display(result_query.all())
@@ -356,43 +403,65 @@ def project():
                 if num != "": result_query1 = result_query1.filter(Projects.项目号 == num)
         elif request.form.get('type') == 'delete_1':
             idx = request.form.get('key')
-            course_result = db.session.query(TakingProjects).filter_by(工号=idx).first()
-            db.session.delete(course_result)
+            porject_result = db.session.query(TakingProjects).filter_by(工号=idx).first()
+            if porject_result.承担经费 != 0:
+                return render_template('error.html', message1='删除错误', message2='删除条目承担经费不为0', message3='请先转移该教师的项目承担经费')
+            db.session.delete(porject_result)
             db.session.commit()
-        elif request.form.get('type') == 'update_1':
-            idx = request.form.get('key')
-            course_result = db.session.query(TakingProjects).filter_by(工号=idx).first()
-            for i in range(len(labels2)):
-                update_value = request.form.get(labels2[i])
-                if update_value != "":
-                    course_result.__setattr__(labels2[i], update_value)
-            db.session.commit()
-        elif request.form.get('type') == 'insert_1':
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '修改':
             paramlen = request.form.get('cnt')
             num = request.form.get('项目号')
             if not exist('project', num):
                 return render_template('error.html', message1='缺少条目', message2='项目不存在', message3='请先添加项目')
-            if not exist('takingproject', num):
-                return render_template('error.html', message1='重复条目', message2='项目的教师已经添加', message3='请勿重复添加或者删除后重试')
-            project_result = db.session.query(Projects).filter_by(项目号=num).first()
-            total = project_result.总经费
-            rank_set = {}
             for i in range(int(paramlen)):
-                rank = request.form.get('排名'+str(i+1))
-                money = request.form.get('承担经费'+str(i+1))
+                rank = int(request.form.get('排名'+str(i+1)))
+                money = float(request.form.get('承担经费'+str(i+1)))
+                idx = request.form.get('工号'+str(i+1))
+                taking_result = db.session.query(TakingProjects).filter_by(项目号=num, 工号=idx).first()
+                taking_result.__setattr__('排名', rank)
+                taking_result.__setattr__('承担经费', money)
+            # check
+            taking_result = db.session.query(TakingProjects).filter_by(项目号=num)
+            total = db.session.query(Projects).filter_by(项目号=num).first().总经费
+            sum = 0
+            rank_set = {}
+            for i in taking_result.all():
+                if int(i.排名) in rank_set:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='项目的教师排名不能有重复', message3=f'{i.工号}的排名重复')
+                rank_set[int(i.排名)] = True
+                sum += float(i.承担经费)
+            if abs(total - sum) > 1e-4:
+                db.session.rollback()
+                return render_template('error.html', message1='数据检查失败', message2='项目的总经费与教师的承担经费不匹配', message3=f'项目的总经费为{total},教师的承担经费总额为{sum}')
+            db.session.commit()
+        elif request.form.get('type') == 'insert_1' and request.form.get('choose') == '添加':
+            paramlen = request.form.get('cnt')
+            num = request.form.get('项目号')
+            if not exist('project', num):
+                return render_template('error.html', message1='缺少条目', message2='项目不存在', message3='请先添加项目')
+            for i in range(int(paramlen)):
                 project = TakingProjects(
                     工号 = request.form.get('工号'+str(i+1)),
                     项目号 = num,
-                    排名 = rank,
-                    承担经费 = money
+                    排名 = int(request.form.get('排名'+str(i+1))),
+                    承担经费 = float(request.form.get('承担经费'+str(i+1)))
                 )
                 db.session.add(project)
-                if rank in rank_set:
-                    return render_template('error.html', message1='数据检查失败', message2='项目的教师排名不能有重复', message3=f'第{i+1}位教师的排名重复')
-                rank_set[rank] = True
-                total -= money
-            if abs(total) > 1e-4:
-                return render_template('error.html', message1='数据检查失败', message2='项目的总经费与教师的承担经费不匹配', message3=f'项目的总经费为{project_result.总经费},教师的承担经费总额为{total}')
+            # check
+            taking_result = db.session.query(TakingProjects).filter_by(项目号=num)
+            total = db.session.query(Projects).filter_by(项目号=num).first().总经费
+            sum = 0
+            rank_set = {}
+            for i in taking_result.all():
+                if int(i.排名) in rank_set:
+                    db.session.rollback()
+                    return render_template('error.html', message1='数据检查失败', message2='项目的教师排名不能有重复', message3=f'{i.工号}的排名重复')
+                rank_set[int(i.排名)] = True
+                sum += float(i.承担经费)
+            if abs(total - sum) > 1e-4:
+                db.session.rollback()
+                return render_template('error.html', message1='数据检查失败', message2='项目的总经费与教师的承担经费不匹配', message3=f'项目的总经费为{total},教师的承担经费总额为{sum}')
             db.session.commit()
 
     result = display(result_query.all())
@@ -473,6 +542,27 @@ def error():
     if request.method == 'POST':
         return redirect( url_for(lasttemplate) )
     # return render_template('error.html')
+
+@app.errorhandler(Exception)
+def err_handle(e):
+    message1 = ''
+    message2 = ''
+    message3 = ''
+    if (type(e) == IndexError):
+        message1 = '类型错误'
+        message2 = '某项目格式错误'
+        message3 = str(e)
+    elif (type(e) == AssertionError):
+        message1 = '删除错误'
+        message2 = '删除条目存在依赖'
+        message3 = str(e)
+    elif (type(e) == sqlalchemy.exc.IntegrityError):
+        message1 = '更新/插入错误'
+        message2 = str(e._message())
+    else:
+        message1 = type(e)
+        message2 = str(e)
+    return render_template('error.html', message1=message1, message2=message2, message3=message3)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
